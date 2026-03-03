@@ -148,6 +148,7 @@ struct IntelligencePill: View {
     @ObservedObject var llamaState: LlamaState
     @State private var progress: Double = 0
     @State private var isDownloading = false
+    @State private var observation: NSKeyValueObservation?
 
     var body: some View {
         Group {
@@ -187,7 +188,7 @@ struct IntelligencePill: View {
             }
         }
         
-        _ = task.progress.observe(\.fractionCompleted) { p, _ in
+        observation = task.progress.observe(\.fractionCompleted) { p, _ in
             Task { @MainActor in
                 self.progress = p.fractionCompleted
             }
