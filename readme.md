@@ -3,8 +3,8 @@
 Asbestos is a high-performance cross-platform research project demonstrating the integration of the llama.cpp C++ inference engine into native mobile and desktop environments. This project showcases the ability to run Large Language Models (LLMs) and Multimodal Vision models locally on consumer-grade hardware (cpu) with minimal latency and high privacy.
 
 <div align="center">
-  <img src="assets/ios-screenshot.png" alt="iOS App Screenshot" width="250" style="margin-right: 20px;" />
-  <video src="assets/cli.mp4" width="500" controls autoplay loop muted></video>
+  <img src="https://github.com/jeffasante/asbestos/raw/main/assets/ios-screenshot.png" alt="iOS App Screenshot" width="250" style="margin-right: 20px;" />
+  <video src="https://github.com/jeffasante/asbestos/raw/main/assets/cli.mp4" width="500" controls autoplay loop muted></video>
 </div>
 
 ## Project Overview
