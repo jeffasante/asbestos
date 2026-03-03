@@ -125,7 +125,6 @@ struct ContentView: View {
             .padding(.bottom, 20)
         }
         .background(Theme.background)
-        .edgesIgnoringSafeArea(.bottom)
         .alert("Delete Model?", isPresented: $showDeleteConfirm) {
             Button("Cancel", role: .cancel) { }
             Button("Delete", role: .destructive) {
