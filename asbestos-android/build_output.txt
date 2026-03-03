@@ -1,0 +1,543 @@
+
+> Configure project :app
+WARNING: BuildType 'debug' is both debuggable and has 'isMinifyEnabled' set to true.
+All code optimizations and obfuscation are disabled for debuggable builds.
+
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :lib:preBuild UP-TO-DATE
+> Task :lib:preDebugBuild UP-TO-DATE
+> Task :lib:writeDebugAarMetadata UP-TO-DATE
+> Task :app:checkDebugAarMetadata UP-TO-DATE
+> Task :lib:processDebugNavigationResources UP-TO-DATE
+> Task :app:processDebugNavigationResources UP-TO-DATE
+> Task :app:compileDebugNavigationResources UP-TO-DATE
+> Task :app:generateDebugResValues UP-TO-DATE
+> Task :lib:generateDebugResValues UP-TO-DATE
+> Task :lib:generateDebugResources UP-TO-DATE
+> Task :lib:packageDebugResources UP-TO-DATE
+> Task :app:mapDebugSourceSetPaths UP-TO-DATE
+> Task :app:generateDebugResources UP-TO-DATE
+> Task :app:mergeDebugResources UP-TO-DATE
+> Task :app:packageDebugResources UP-TO-DATE
+> Task :app:parseDebugLocalResources UP-TO-DATE
+> Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksDebug UP-TO-DATE
+> Task :lib:extractDeepLinksDebug UP-TO-DATE
+> Task :lib:processDebugManifest UP-TO-DATE
+> Task :app:processDebugMainManifest UP-TO-DATE
+> Task :app:processDebugManifest UP-TO-DATE
+> Task :app:processDebugManifestForPackage UP-TO-DATE
+> Task :lib:parseDebugLocalResources UP-TO-DATE
+> Task :lib:generateDebugRFile UP-TO-DATE
+> Task :app:processDebugResources UP-TO-DATE
+> Task :lib:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :lib:compileDebugKotlin UP-TO-DATE
+> Task :lib:javaPreCompileDebug UP-TO-DATE
+> Task :lib:compileDebugJavaWithJavac NO-SOURCE
+> Task :lib:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :app:compileDebugKotlin UP-TO-DATE
+> Task :app:javaPreCompileDebug UP-TO-DATE
+> Task :app:compileDebugJavaWithJavac NO-SOURCE
+> Task :app:mergeDebugShaders UP-TO-DATE
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :lib:mergeDebugShaders UP-TO-DATE
+> Task :lib:compileDebugShaders NO-SOURCE
+> Task :lib:generateDebugAssets UP-TO-DATE
+> Task :lib:mergeDebugAssets UP-TO-DATE
+> Task :app:mergeDebugAssets UP-TO-DATE
+> Task :app:compressDebugAssets UP-TO-DATE
+> Task :lib:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :lib:exportDebugConsumerProguardFiles UP-TO-DATE
+> Task :app:checkDebugDuplicateClasses UP-TO-DATE
+> Task :app:extractProguardFiles UP-TO-DATE
+> Task :app:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :app:processDebugJavaRes UP-TO-DATE
+> Task :lib:processDebugJavaRes UP-TO-DATE
+> Task :app:mergeDebugJavaResource UP-TO-DATE
+> Task :lib:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :app:minifyDebugWithR8 UP-TO-DATE
+> Task :app:mergeDebugJniLibFolders UP-TO-DATE
+> Task :lib:preReleaseBuild UP-TO-DATE
+
+> Task :lib:configureCMakeRelease[arm64-v8a]
+C/C++: -- The C compiler identification is Clang 20.0.0
+C/C++: -- The CXX compiler identification is Clang 20.0.0
+C/C++: -- Detecting C compiler ABI info
+C/C++: -- Detecting C compiler ABI info - done
+C/C++: -- Check for working C compiler: /Users/jeff/Library/Android/sdk/ndk/29.0.13113456/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang - skipped
+C/C++: -- Detecting C compile features
+C/C++: -- Detecting C compile features - done
+C/C++: -- Detecting CXX compiler ABI info
+C/C++: -- Detecting CXX compiler ABI info - done
+C/C++: -- Check for working CXX compiler: /Users/jeff/Library/Android/sdk/ndk/29.0.13113456/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ - skipped
+C/C++: -- Detecting CXX compile features
+C/C++: -- Detecting CXX compile features - done
+C/C++: -- Detected Android ABI: arm64-v8a
+C/C++: CMAKE_BUILD_TYPE=Release
+C/C++: -- Found Git: /usr/bin/git (found version "2.39.5 (Apple Git-154)") 
+C/C++: -- The ASM compiler identification is Clang with GNU-like command-line
+C/C++: -- Found assembler: /Users/jeff/Library/Android/sdk/ndk/29.0.13113456/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang
+C/C++: -- Setting GGML_NATIVE_DEFAULT to OFF
+C/C++: -- GGML_NATIVE         : OFF
+C/C++: -- GGML_NATIVE_DEFAULT : OFF
+C/C++: -- INS_ENB             : OFF
+C/C++: -- Looking for pthread.h
+C/C++: -- Looking for pthread.h - found
+C/C++: -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+C/C++: -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+C/C++: -- Check if compiler accepts -pthread
+C/C++: -- Check if compiler accepts -pthread - yes
+C/C++: -- Found Threads: TRUE  
+C/C++: -- Warning: ccache not found - consider installing it for faster compilation or disable this warning with GGML_CCACHE=OFF
+C/C++: -- CMAKE_SYSTEM_PROCESSOR: aarch64
+C/C++: -- GGML_SYSTEM_ARCH: ARM
+C/C++: -- Including CPU backend
+C/C++: -- Found OpenMP_C: -fopenmp=libomp  
+C/C++: -- Found OpenMP_CXX: -fopenmp=libomp  
+C/C++: -- Found OpenMP: TRUE   
+C/C++: -- ARM detected
+C/C++: -- Performing Test GGML_COMPILER_SUPPORTS_FP16_FORMAT_I3E
+C/C++: -- Performing Test GGML_COMPILER_SUPPORTS_FP16_FORMAT_I3E - Failed
+C/C++: -- Checking for ARM features using flags:
+C/C++: --   -march=armv8-a
+C/C++: -- Performing Test HAVE_DOTPROD
+C/C++: -- Performing Test HAVE_DOTPROD - Failed
+C/C++: -- Performing Test HAVE_SVE
+C/C++: -- Performing Test HAVE_SVE - Failed
+C/C++: -- Performing Test HAVE_MATMUL_INT8
+C/C++: -- Performing Test HAVE_MATMUL_INT8 - Failed
+C/C++: -- Performing Test HAVE_FMA
+C/C++: -- Performing Test HAVE_FMA - Success
+C/C++: -- Performing Test HAVE_FP16_VECTOR_ARITHMETIC
+C/C++: -- Performing Test HAVE_FP16_VECTOR_ARITHMETIC - Failed
+C/C++: -- Performing Test HAVE_SME
+C/C++: -- Performing Test HAVE_SME - Failed
+C/C++: -- Using KleidiAI optimized kernels if applicable
+C/C++: CMake Error at /Users/jeff/Library/Android/sdk/cmake/3.22.1/share/cmake-3.22/Modules/ExternalProject.cmake:2806 (message):
+C/C++:   At least one entry of URL is a path (invalid in a list)
+C/C++: Call Stack (most recent call first):
+C/C++:   /Users/jeff/Library/Android/sdk/cmake/3.22.1/share/cmake-3.22/Modules/ExternalProject.cmake:3716 (_ep_add_download_command)
+C/C++:   CMakeLists.txt:15 (ExternalProject_Add)
+C/C++: -- Configuring incomplete, errors occurred!
+C/C++: See also "/Users/jeff/Desktop/asbestos/llama.android/lib/.cxx/Release/z6n5sg2u/arm64-v8a/_deps/kleidiai_download-subbuild/CMakeFiles/CMakeOutput.log".
+C/C++: CMake Error at /Users/jeff/Library/Android/sdk/cmake/3.22.1/share/cmake-3.22/Modules/FetchContent.cmake:1075 (message):
+C/C++:   CMake step for kleidiai_download failed: 1
+C/C++: Call Stack (most recent call first):
+C/C++:   /Users/jeff/Library/Android/sdk/cmake/3.22.1/share/cmake-3.22/Modules/FetchContent.cmake:1216:EVAL:2 (__FetchContent_directPopulate)
+C/C++:   /Users/jeff/Library/Android/sdk/cmake/3.22.1/share/cmake-3.22/Modules/FetchContent.cmake:1216 (cmake_language)
+C/C++:   /Users/jeff/Desktop/asbestos/llama.cpp/ggml/src/ggml-cpu/CMakeLists.txt:589 (FetchContent_Populate)
+C/C++:   /Users/jeff/Desktop/asbestos/llama.cpp/ggml/src/CMakeLists.txt:348 (ggml_add_cpu_backend_variant_impl)
+C/C++:   /Users/jeff/Desktop/asbestos/llama.cpp/ggml/src/CMakeLists.txt:400 (ggml_add_cpu_backend_variant)
+C/C++: -- Configuring incomplete, errors occurred!
+C/C++: See also "/Users/jeff/Desktop/asbestos/llama.android/lib/.cxx/Release/z6n5sg2u/arm64-v8a/CMakeFiles/CMakeOutput.log".
+C/C++: See also "/Users/jeff/Desktop/asbestos/llama.android/lib/.cxx/Release/z6n5sg2u/arm64-v8a/CMakeFiles/CMakeError.log".
+
+> Task :lib:configureCMakeRelease[arm64-v8a] FAILED
+> Task :app:convertShrunkResourcesToBinaryDebug
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':lib:configureCMakeRelease[arm64-v8a]'.
+> [CXX1429] error when building with cmake using /Users/jeff/Desktop/asbestos/llama.android/lib/src/main/cpp/CMakeLists.txt: -- The C compiler identification is Clang 20.0.0
+  -- The CXX compiler identification is Clang 20.0.0
+  -- Detecting C compiler ABI info
+  -- Detecting C compiler ABI info - done
+  -- Check for working C compiler: /Users/jeff/Library/Android/sdk/ndk/29.0.13113456/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang - skipped
+  -- Detecting C compile features
+  -- Detecting C compile features - done
+  -- Detecting CXX compiler ABI info
+  -- Detecting CXX compiler ABI info - done
+  -- Check for working CXX compiler: /Users/jeff/Library/Android/sdk/ndk/29.0.13113456/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ - skipped
+  -- Detecting CXX compile features
+  -- Detecting CXX compile features - done
+  -- Detected Android ABI: arm64-v8a
+  -- Found Git: /usr/bin/git (found version "2.39.5 (Apple Git-154)") 
+  -- The ASM compiler identification is Clang with GNU-like command-line
+  -- Found assembler: /Users/jeff/Library/Android/sdk/ndk/29.0.13113456/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang
+  -- Setting GGML_NATIVE_DEFAULT to OFF
+  -- GGML_NATIVE         : OFF
+  -- GGML_NATIVE_DEFAULT : OFF
+  -- INS_ENB             : OFF
+  -- Looking for pthread.h
+  -- Looking for pthread.h - found
+  -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+  -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+  -- Check if compiler accepts -pthread
+  -- Check if compiler accepts -pthread - yes
+  -- Found Threads: TRUE  
+  -- Warning: ccache not found - consider installing it for faster compilation or disable this warning with GGML_CCACHE=OFF
+  -- CMAKE_SYSTEM_PROCESSOR: aarch64
+  -- GGML_SYSTEM_ARCH: ARM
+  -- Including CPU backend
+  -- Found OpenMP_C: -fopenmp=libomp  
+  -- Found OpenMP_CXX: -fopenmp=libomp  
+  -- Found OpenMP: TRUE   
+  -- ARM detected
+  -- Performing Test GGML_COMPILER_SUPPORTS_FP16_FORMAT_I3E
+  -- Performing Test GGML_COMPILER_SUPPORTS_FP16_FORMAT_I3E - Failed
+  -- Checking for ARM features using flags:
+  --   -march=armv8-a
+  -- Performing Test HAVE_DOTPROD
+  -- Performing Test HAVE_DOTPROD - Failed
+  -- Performing Test HAVE_SVE
+  -- Performing Test HAVE_SVE - Failed
+  -- Performing Test HAVE_MATMUL_INT8
+  -- Performing Test HAVE_MATMUL_INT8 - Failed
+  -- Performing Test HAVE_FMA
+  -- Performing Test HAVE_FMA - Success
+  -- Performing Test HAVE_FP16_VECTOR_ARITHMETIC
+  -- Performing Test HAVE_FP16_VECTOR_ARITHMETIC - Failed
+  -- Performing Test HAVE_SME
+  -- Performing Test HAVE_SME - Failed
+  -- Using KleidiAI optimized kernels if applicable
+  -- Configuring incomplete, errors occurred!
+  See also "/Users/jeff/Desktop/asbestos/llama.android/lib/.cxx/Release/z6n5sg2u/arm64-v8a/CMakeFiles/CMakeOutput.log".
+  See also "/Users/jeff/Desktop/asbestos/llama.android/lib/.cxx/Release/z6n5sg2u/arm64-v8a/CMakeFiles/CMakeError.log".
+  
+  C++ build system [configure] failed while executing:
+      /Users/jeff/Library/Android/sdk/cmake/3.22.1/bin/cmake \
+        -H/Users/jeff/Desktop/asbestos/llama.android/lib/src/main/cpp \
+        -DCMAKE_SYSTEM_NAME=Android \
+        -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+        -DCMAKE_SYSTEM_VERSION=33 \
+        -DANDROID_PLATFORM=android-33 \
+        -DANDROID_ABI=arm64-v8a \
+        -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a \
+        -DANDROID_NDK=/Users/jeff/Library/Android/sdk/ndk/29.0.13113456 \
+        -DCMAKE_ANDROID_NDK=/Users/jeff/Library/Android/sdk/ndk/29.0.13113456 \
+        -DCMAKE_TOOLCHAIN_FILE=/Users/jeff/Library/Android/sdk/ndk/29.0.13113456/build/cmake/android.toolchain.cmake \
+        -DCMAKE_MAKE_PROGRAM=/Users/jeff/Library/Android/sdk/cmake/3.22.1/bin/ninja \
+        -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/Users/jeff/Desktop/asbestos/llama.android/lib/build/intermediates/cxx/Release/z6n5sg2u/obj/arm64-v8a \
+        -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=/Users/jeff/Desktop/asbestos/llama.android/lib/build/intermediates/cxx/Release/z6n5sg2u/obj/arm64-v8a \
+        -B/Users/jeff/Desktop/asbestos/llama.android/lib/.cxx/Release/z6n5sg2u/arm64-v8a \
+        -GNinja \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_MESSAGE_LOG_LEVEL=DEBUG \
+        -DCMAKE_VERBOSE_MAKEFILE=ON \
+        -DBUILD_SHARED_LIBS=ON \
+        -DLLAMA_BUILD_COMMON=ON \
+        -DLLAMA_OPENSSL=OFF \
+        -DGGML_NATIVE=OFF \
+        -DGGML_BACKEND_DL=ON \
+        -DGGML_CPU_ALL_VARIANTS=ON \
+        -DGGML_LLAMAFILE=OFF
+    from /Users/jeff/Desktop/asbestos/llama.android/lib
+  CMAKE_BUILD_TYPE=Release
+  CMake Error at /Users/jeff/Library/Android/sdk/cmake/3.22.1/share/cmake-3.22/Modules/ExternalProject.cmake:2806 (message):
+    At least one entry of URL is a path (invalid in a list)
+  Call Stack (most recent call first):
+    /Users/jeff/Library/Android/sdk/cmake/3.22.1/share/cmake-3.22/Modules/ExternalProject.cmake:3716 (_ep_add_download_command)
+    CMakeLists.txt:15 (ExternalProject_Add)
+  
+  
+  -- Configuring incomplete, errors occurred!
+  See also "/Users/jeff/Desktop/asbestos/llama.android/lib/.cxx/Release/z6n5sg2u/arm64-v8a/_deps/kleidiai_download-subbuild/CMakeFiles/CMakeOutput.log".
+  
+  CMake Error at /Users/jeff/Library/Android/sdk/cmake/3.22.1/share/cmake-3.22/Modules/FetchContent.cmake:1075 (message):
+    CMake step for kleidiai_download failed: 1
+  Call Stack (most recent call first):
+    /Users/jeff/Library/Android/sdk/cmake/3.22.1/share/cmake-3.22/Modules/FetchContent.cmake:1216:EVAL:2 (__FetchContent_directPopulate)
+    /Users/jeff/Library/Android/sdk/cmake/3.22.1/share/cmake-3.22/Modules/FetchContent.cmake:1216 (cmake_language)
+    /Users/jeff/Desktop/asbestos/llama.cpp/ggml/src/ggml-cpu/CMakeLists.txt:589 (FetchContent_Populate)
+    /Users/jeff/Desktop/asbestos/llama.cpp/ggml/src/CMakeLists.txt:348 (ggml_add_cpu_backend_variant_impl)
+    /Users/jeff/Desktop/asbestos/llama.cpp/ggml/src/CMakeLists.txt:400 (ggml_add_cpu_backend_variant) : com.android.ide.common.process.ProcessException: -- The C compiler identification is Clang 20.0.0
+  -- The CXX compiler identification is Clang 20.0.0
+  -- Detecting C compiler ABI info
+  -- Detecting C compiler ABI info - done
+  -- Check for working C compiler: /Users/jeff/Library/Android/sdk/ndk/29.0.13113456/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang - skipped
+  -- Detecting C compile features
+  -- Detecting C compile features - done
+  -- Detecting CXX compiler ABI info
+  -- Detecting CXX compiler ABI info - done
+  -- Check for working CXX compiler: /Users/jeff/Library/Android/sdk/ndk/29.0.13113456/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ - skipped
+  -- Detecting CXX compile features
+  -- Detecting CXX compile features - done
+  -- Detected Android ABI: arm64-v8a
+  -- Found Git: /usr/bin/git (found version "2.39.5 (Apple Git-154)") 
+  -- The ASM compiler identification is Clang with GNU-like command-line
+  -- Found assembler: /Users/jeff/Library/Android/sdk/ndk/29.0.13113456/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang
+  -- Setting GGML_NATIVE_DEFAULT to OFF
+  -- GGML_NATIVE         : OFF
+  -- GGML_NATIVE_DEFAULT : OFF
+  -- INS_ENB             : OFF
+  -- Looking for pthread.h
+  -- Looking for pthread.h - found
+  -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+  -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+  -- Check if compiler accepts -pthread
+  -- Check if compiler accepts -pthread - yes
+  -- Found Threads: TRUE  
+  -- Warning: ccache not found - consider installing it for faster compilation or disable this warning with GGML_CCACHE=OFF
+  -- CMAKE_SYSTEM_PROCESSOR: aarch64
+  -- GGML_SYSTEM_ARCH: ARM
+  -- Including CPU backend
+  -- Found OpenMP_C: -fopenmp=libomp  
+  -- Found OpenMP_CXX: -fopenmp=libomp  
+  -- Found OpenMP: TRUE   
+  -- ARM detected
+  -- Performing Test GGML_COMPILER_SUPPORTS_FP16_FORMAT_I3E
+  -- Performing Test GGML_COMPILER_SUPPORTS_FP16_FORMAT_I3E - Failed
+  -- Checking for ARM features using flags:
+  --   -march=armv8-a
+  -- Performing Test HAVE_DOTPROD
+  -- Performing Test HAVE_DOTPROD - Failed
+  -- Performing Test HAVE_SVE
+  -- Performing Test HAVE_SVE - Failed
+  -- Performing Test HAVE_MATMUL_INT8
+  -- Performing Test HAVE_MATMUL_INT8 - Failed
+  -- Performing Test HAVE_FMA
+  -- Performing Test HAVE_FMA - Success
+  -- Performing Test HAVE_FP16_VECTOR_ARITHMETIC
+  -- Performing Test HAVE_FP16_VECTOR_ARITHMETIC - Failed
+  -- Performing Test HAVE_SME
+  -- Performing Test HAVE_SME - Failed
+  -- Using KleidiAI optimized kernels if applicable
+  -- Configuring incomplete, errors occurred!
+  See also "/Users/jeff/Desktop/asbestos/llama.android/lib/.cxx/Release/z6n5sg2u/arm64-v8a/CMakeFiles/CMakeOutput.log".
+  See also "/Users/jeff/Desktop/asbestos/llama.android/lib/.cxx/Release/z6n5sg2u/arm64-v8a/CMakeFiles/CMakeError.log".
+  
+  C++ build system [configure] failed while executing:
+      /Users/jeff/Library/Android/sdk/cmake/3.22.1/bin/cmake \
+        -H/Users/jeff/Desktop/asbestos/llama.android/lib/src/main/cpp \
+        -DCMAKE_SYSTEM_NAME=Android \
+        -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+        -DCMAKE_SYSTEM_VERSION=33 \
+        -DANDROID_PLATFORM=android-33 \
+        -DANDROID_ABI=arm64-v8a \
+        -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a \
+        -DANDROID_NDK=/Users/jeff/Library/Android/sdk/ndk/29.0.13113456 \
+        -DCMAKE_ANDROID_NDK=/Users/jeff/Library/Android/sdk/ndk/29.0.13113456 \
+        -DCMAKE_TOOLCHAIN_FILE=/Users/jeff/Library/Android/sdk/ndk/29.0.13113456/build/cmake/android.toolchain.cmake \
+        -DCMAKE_MAKE_PROGRAM=/Users/jeff/Library/Android/sdk/cmake/3.22.1/bin/ninja \
+        -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/Users/jeff/Desktop/asbestos/llama.android/lib/build/intermediates/cxx/Release/z6n5sg2u/obj/arm64-v8a \
+        -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=/Users/jeff/Desktop/asbestos/llama.android/lib/build/intermediates/cxx/Release/z6n5sg2u/obj/arm64-v8a \
+        -B/Users/jeff/Desktop/asbestos/llama.android/lib/.cxx/Release/z6n5sg2u/arm64-v8a \
+        -GNinja \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_MESSAGE_LOG_LEVEL=DEBUG \
+        -DCMAKE_VERBOSE_MAKEFILE=ON \
+        -DBUILD_SHARED_LIBS=ON \
+        -DLLAMA_BUILD_COMMON=ON \
+        -DLLAMA_OPENSSL=OFF \
+        -DGGML_NATIVE=OFF \
+        -DGGML_BACKEND_DL=ON \
+        -DGGML_CPU_ALL_VARIANTS=ON \
+        -DGGML_LLAMAFILE=OFF
+    from /Users/jeff/Desktop/asbestos/llama.android/lib
+  CMAKE_BUILD_TYPE=Release
+  CMake Error at /Users/jeff/Library/Android/sdk/cmake/3.22.1/share/cmake-3.22/Modules/ExternalProject.cmake:2806 (message):
+    At least one entry of URL is a path (invalid in a list)
+  Call Stack (most recent call first):
+    /Users/jeff/Library/Android/sdk/cmake/3.22.1/share/cmake-3.22/Modules/ExternalProject.cmake:3716 (_ep_add_download_command)
+    CMakeLists.txt:15 (ExternalProject_Add)
+  
+  
+  -- Configuring incomplete, errors occurred!
+  See also "/Users/jeff/Desktop/asbestos/llama.android/lib/.cxx/Release/z6n5sg2u/arm64-v8a/_deps/kleidiai_download-subbuild/CMakeFiles/CMakeOutput.log".
+  
+  CMake Error at /Users/jeff/Library/Android/sdk/cmake/3.22.1/share/cmake-3.22/Modules/FetchContent.cmake:1075 (message):
+    CMake step for kleidiai_download failed: 1
+  Call Stack (most recent call first):
+    /Users/jeff/Library/Android/sdk/cmake/3.22.1/share/cmake-3.22/Modules/FetchContent.cmake:1216:EVAL:2 (__FetchContent_directPopulate)
+    /Users/jeff/Library/Android/sdk/cmake/3.22.1/share/cmake-3.22/Modules/FetchContent.cmake:1216 (cmake_language)
+    /Users/jeff/Desktop/asbestos/llama.cpp/ggml/src/ggml-cpu/CMakeLists.txt:589 (FetchContent_Populate)
+    /Users/jeff/Desktop/asbestos/llama.cpp/ggml/src/CMakeLists.txt:348 (ggml_add_cpu_backend_variant_impl)
+    /Users/jeff/Desktop/asbestos/llama.cpp/ggml/src/CMakeLists.txt:400 (ggml_add_cpu_backend_variant)
+  	at com.android.build.gradle.internal.cxx.process.ExecuteProcessKt.execute(ExecuteProcess.kt:288)
+  	at com.android.build.gradle.internal.cxx.process.ExecuteProcessKt$executeProcess$1.invoke(ExecuteProcess.kt:108)
+  	at com.android.build.gradle.internal.cxx.process.ExecuteProcessKt$executeProcess$1.invoke(ExecuteProcess.kt:106)
+  	at com.android.build.gradle.internal.cxx.timing.TimingEnvironmentKt.time(TimingEnvironment.kt:32)
+  	at com.android.build.gradle.internal.cxx.process.ExecuteProcessKt.executeProcess(ExecuteProcess.kt:106)
+  	at com.android.build.gradle.internal.cxx.process.ExecuteProcessKt.executeProcess$default(ExecuteProcess.kt:85)
+  	at com.android.build.gradle.tasks.CmakeQueryMetadataGenerator.executeProcess(CmakeFileApiMetadataGenerator.kt:59)
+  	at com.android.build.gradle.tasks.ExternalNativeJsonGenerator$configureOneAbi$1$1$3.invoke(ExternalNativeJsonGenerator.kt:247)
+  	at com.android.build.gradle.tasks.ExternalNativeJsonGenerator$configureOneAbi$1$1$3.invoke(ExternalNativeJsonGenerator.kt:247)
+  	at com.android.build.gradle.internal.cxx.timing.TimingEnvironmentKt.time(TimingEnvironment.kt:32)
+  	at com.android.build.gradle.tasks.ExternalNativeJsonGenerator.configureOneAbi(ExternalNativeJsonGenerator.kt:247)
+  	at com.android.build.gradle.tasks.ExternalNativeJsonGenerator.configure(ExternalNativeJsonGenerator.kt:113)
+  	at com.android.build.gradle.tasks.ExternalNativeBuildJsonTask.doTaskAction(ExternalNativeBuildJsonTask.kt:89)
+  	at com.android.build.gradle.internal.tasks.UnsafeOutputsTask$taskAction$$inlined$recordTaskAction$1.invoke(BaseTask.kt:78)
+  	at com.android.build.gradle.internal.tasks.Blocks.recordSpan(Blocks.java:51)
+  	at com.android.build.gradle.internal.tasks.UnsafeOutputsTask.taskAction(UnsafeOutputsTask.kt:81)
+  	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+  	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+  	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+  	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+  	at org.gradle.internal.reflect.JavaMethod.invoke(JavaMethod.java:125)
+  	at org.gradle.api.internal.project.taskfactory.StandardTaskAction.doExecute(StandardTaskAction.java:58)
+  	at org.gradle.api.internal.project.taskfactory.StandardTaskAction.execute(StandardTaskAction.java:51)
+  	at org.gradle.api.internal.project.taskfactory.StandardTaskAction.execute(StandardTaskAction.java:29)
+  	at org.gradle.api.internal.tasks.execution.TaskExecution$3.run(TaskExecution.java:244)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:30)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:27)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:48)
+  	at org.gradle.api.internal.tasks.execution.TaskExecution.executeAction(TaskExecution.java:229)
+  	at org.gradle.api.internal.tasks.execution.TaskExecution.executeActions(TaskExecution.java:212)
+  	at org.gradle.api.internal.tasks.execution.TaskExecution.executeWithPreviousOutputFiles(TaskExecution.java:195)
+  	at org.gradle.api.internal.tasks.execution.TaskExecution.execute(TaskExecution.java:162)
+  	at org.gradle.internal.execution.steps.ExecuteStep.executeInternal(ExecuteStep.java:105)
+  	at org.gradle.internal.execution.steps.ExecuteStep.access$000(ExecuteStep.java:44)
+  	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:59)
+  	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:56)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:210)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:205)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+  	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:56)
+  	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:44)
+  	at org.gradle.internal.execution.steps.CancelExecutionStep.execute(CancelExecutionStep.java:42)
+  	at org.gradle.internal.execution.steps.TimeoutStep.executeWithoutTimeout(TimeoutStep.java:75)
+  	at org.gradle.internal.execution.steps.TimeoutStep.execute(TimeoutStep.java:55)
+  	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:50)
+  	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:28)
+  	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.execute(RemovePreviousOutputsStep.java:67)
+  	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.execute(RemovePreviousOutputsStep.java:37)
+  	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:61)
+  	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:26)
+  	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:69)
+  	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:46)
+  	at org.gradle.internal.execution.steps.ResolveInputChangesStep.execute(ResolveInputChangesStep.java:40)
+  	at org.gradle.internal.execution.steps.ResolveInputChangesStep.execute(ResolveInputChangesStep.java:29)
+  	at org.gradle.internal.execution.steps.BuildCacheStep.executeWithoutCache(BuildCacheStep.java:189)
+  	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$execute$1(BuildCacheStep.java:75)
+  	at org.gradle.internal.Either$Right.fold(Either.java:175)
+  	at org.gradle.internal.execution.caching.CachingState.fold(CachingState.java:62)
+  	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:73)
+  	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:48)
+  	at org.gradle.internal.execution.steps.StoreExecutionStateStep.execute(StoreExecutionStateStep.java:46)
+  	at org.gradle.internal.execution.steps.StoreExecutionStateStep.execute(StoreExecutionStateStep.java:35)
+  	at org.gradle.internal.execution.steps.SkipUpToDateStep.executeBecause(SkipUpToDateStep.java:75)
+  	at org.gradle.internal.execution.steps.SkipUpToDateStep.lambda$execute$2(SkipUpToDateStep.java:53)
+  	at java.base/java.util.Optional.orElseGet(Optional.java:364)
+  	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:53)
+  	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:35)
+  	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:37)
+  	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:27)
+  	at org.gradle.internal.execution.steps.ResolveIncrementalCachingStateStep.executeDelegate(ResolveIncrementalCachingStateStep.java:49)
+  	at org.gradle.internal.execution.steps.ResolveIncrementalCachingStateStep.executeDelegate(ResolveIncrementalCachingStateStep.java:27)
+  	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:71)
+  	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:39)
+  	at org.gradle.internal.execution.steps.ResolveChangesStep.execute(ResolveChangesStep.java:65)
+  	at org.gradle.internal.execution.steps.ResolveChangesStep.execute(ResolveChangesStep.java:36)
+  	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:107)
+  	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:56)
+  	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.execute(AbstractCaptureStateBeforeExecutionStep.java:64)
+  	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.execute(AbstractCaptureStateBeforeExecutionStep.java:43)
+  	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.executeWithNonEmptySources(AbstractSkipEmptyWorkStep.java:125)
+  	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.execute(AbstractSkipEmptyWorkStep.java:56)
+  	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.execute(AbstractSkipEmptyWorkStep.java:36)
+  	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsStartedStep.execute(MarkSnapshottingInputsStartedStep.java:38)
+  	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.execute(LoadPreviousExecutionStateStep.java:36)
+  	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.execute(LoadPreviousExecutionStateStep.java:23)
+  	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.execute(HandleStaleOutputsStep.java:75)
+  	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.execute(HandleStaleOutputsStep.java:41)
+  	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.lambda$execute$0(AssignMutableWorkspaceStep.java:35)
+  	at org.gradle.api.internal.tasks.execution.TaskExecution$4.withWorkspace(TaskExecution.java:289)
+  	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.execute(AssignMutableWorkspaceStep.java:31)
+  	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.execute(AssignMutableWorkspaceStep.java:22)
+  	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:40)
+  	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:23)
+  	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.lambda$execute$2(ExecuteWorkBuildOperationFiringStep.java:67)
+  	at java.base/java.util.Optional.orElseGet(Optional.java:364)
+  	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:67)
+  	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:39)
+  	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:46)
+  	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:34)
+  	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:48)
+  	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:35)
+  	at org.gradle.internal.execution.impl.DefaultExecutionEngine$1.execute(DefaultExecutionEngine.java:64)
+  	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:127)
+  	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:116)
+  	at org.gradle.api.internal.tasks.execution.ProblemsTaskPathTrackingTaskExecuter.execute(ProblemsTaskPathTrackingTaskExecuter.java:41)
+  	at org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
+  	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.java:51)
+  	at org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
+  	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:74)
+  	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+  	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
+  	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
+  	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:210)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:205)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+  	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
+  	at org.gradle.execution.plan.LocalTaskNodeExecutor.execute(LocalTaskNodeExecutor.java:42)
+  	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:331)
+  	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:318)
+  	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.lambda$execute$0(DefaultTaskExecutionGraph.java:314)
+  	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
+  	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:314)
+  	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:303)
+  	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:459)
+  	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:376)
+  	at org.gradle.execution.plan.DefaultPlanExecutor.process(DefaultPlanExecutor.java:111)
+  	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.executeWithServices(DefaultTaskExecutionGraph.java:138)
+  	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.execute(DefaultTaskExecutionGraph.java:123)
+  	at org.gradle.execution.SelectedTaskExecutionAction.execute(SelectedTaskExecutionAction.java:35)
+  	at org.gradle.execution.DryRunBuildExecutionAction.execute(DryRunBuildExecutionAction.java:51)
+  	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecutor.java:54)
+  	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecutor.java:43)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:210)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:205)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+  	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor.execute(BuildOperationFiringBuildWorkerExecutor.java:40)
+  	at org.gradle.internal.build.DefaultBuildLifecycleController.lambda$executeTasks$10(DefaultBuildLifecycleController.java:313)
+  	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:266)
+  	at org.gradle.internal.model.StateTransitionController.lambda$tryTransition$8(StateTransitionController.java:177)
+  	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:46)
+  	at org.gradle.internal.model.StateTransitionController.tryTransition(StateTransitionController.java:177)
+  	at org.gradle.internal.build.DefaultBuildLifecycleController.executeTasks(DefaultBuildLifecycleController.java:304)
+  	at org.gradle.internal.build.DefaultBuildWorkGraphController$DefaultBuildWorkGraph.runWork(DefaultBuildWorkGraphController.java:220)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:263)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:127)
+  	at org.gradle.composite.internal.DefaultBuildController.doRun(DefaultBuildController.java:181)
+  	at org.gradle.composite.internal.DefaultBuildController.access$000(DefaultBuildController.java:50)
+  	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.lambda$run$0(DefaultBuildController.java:198)
+  	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:85)
+  	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.run(DefaultBuildController.java:198)
+  	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+  	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+  	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+  	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
+  	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+  	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+  	at java.base/java.lang.Thread.run(Thread.java:840)
+  Caused by: com.android.ide.common.process.ProcessException: Error while executing process /Users/jeff/Library/Android/sdk/cmake/3.22.1/bin/cmake with arguments {-H/Users/jeff/Desktop/asbestos/llama.android/lib/src/main/cpp -DCMAKE_SYSTEM_NAME=Android -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_SYSTEM_VERSION=33 -DANDROID_PLATFORM=android-33 -DANDROID_ABI=arm64-v8a -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a -DANDROID_NDK=/Users/jeff/Library/Android/sdk/ndk/29.0.13113456 -DCMAKE_ANDROID_NDK=/Users/jeff/Library/Android/sdk/ndk/29.0.13113456 -DCMAKE_TOOLCHAIN_FILE=/Users/jeff/Library/Android/sdk/ndk/29.0.13113456/build/cmake/android.toolchain.cmake -DCMAKE_MAKE_PROGRAM=/Users/jeff/Library/Android/sdk/cmake/3.22.1/bin/ninja -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/Users/jeff/Desktop/asbestos/llama.android/lib/build/intermediates/cxx/Release/z6n5sg2u/obj/arm64-v8a -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=/Users/jeff/Desktop/asbestos/llama.android/lib/build/intermediates/cxx/Release/z6n5sg2u/obj/arm64-v8a -B/Users/jeff/Desktop/asbestos/llama.android/lib/.cxx/Release/z6n5sg2u/arm64-v8a -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_MESSAGE_LOG_LEVEL=DEBUG -DCMAKE_VERBOSE_MAKEFILE=ON -DBUILD_SHARED_LIBS=ON -DLLAMA_BUILD_COMMON=ON -DLLAMA_OPENSSL=OFF -DGGML_NATIVE=OFF -DGGML_BACKEND_DL=ON -DGGML_CPU_ALL_VARIANTS=ON -DGGML_LLAMAFILE=OFF}
+  	at com.android.build.gradle.internal.process.GradleProcessResult.buildProcessException(GradleProcessResult.java:73)
+  	at com.android.build.gradle.internal.process.GradleProcessResult.assertNormalExitValue(GradleProcessResult.java:48)
+  	at com.android.build.gradle.internal.cxx.process.ExecuteProcessKt.execute(ExecuteProcess.kt:277)
+  	... 173 more
+  Caused by: org.gradle.process.internal.ExecException: Process 'command '/Users/jeff/Library/Android/sdk/cmake/3.22.1/bin/cmake'' finished with non-zero exit value 1
+  	at org.gradle.process.internal.DefaultExecHandle$ExecResultImpl.assertNormalExitValue(DefaultExecHandle.java:442)
+  	at com.android.build.gradle.internal.process.GradleProcessResult.assertNormalExitValue(GradleProcessResult.java:46)
+  	... 174 more
+
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 4s
+47 actionable tasks: 2 executed, 45 up-to-date

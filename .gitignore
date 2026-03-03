@@ -1,0 +1,31 @@
+# macOS
+.DS_Store
+
+# Android Artifacts
+asbestos-android/.gradle/
+asbestos-android/build/
+asbestos-android/local.properties
+asbestos-android/.cxx/
+asbestos-android/*.apk
+
+# iOS/Swift Artifacts
+asbestos-ios-app/.build/
+asbestos-ios-app/.swiftpm/
+asbestos-ios-app/DerivedData/
+asbestos-ios-app/*.xcodeproj/
+asbestos-ios-app/*.xcworkspace/
+
+# Swift Package Artifacts
+asbestos-ios/.build/
+asbestos-ios/.swiftpm/
+asbestos-ios/DerivedData/
+
+# LARGE AI Model Weights (Should not be in Git)
+*.gguf
+/mmproj-Qwen_Qwen3.5-0.8B-bf16.gguf
+/Qwen_Qwen3.5-0.8B-Q8_0.gguf
+/asbestos-android/app/files/models/
+
+# Keep the XCFramework though!
+!asbestos-ios/Frameworks/llama.xcframework/
+!asbestos-ios-app/Frameworks/llama.xcframework/

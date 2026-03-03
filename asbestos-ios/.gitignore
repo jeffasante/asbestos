@@ -1,0 +1,15 @@
+# Swift Package Manager Build Artifacts
+.build/
+.swiftpm/
+
+# Xcode Artifacts
+*.xcodeproj/
+DerivedData/
+*.xcworkspace/
+
+# macOS DS_Store
+.DS_Store
+
+# WE WANT to keep the Frameworks/llama.xcframework in the repo for the portfolio
+!Frameworks/
+!Frameworks/llama.xcframework/
