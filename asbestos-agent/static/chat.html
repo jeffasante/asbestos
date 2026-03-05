@@ -763,20 +763,41 @@
 
                     buffer += decoder.decode(value, { stream: true });
 
-                    // Process complete SSE lines
+                    // Process complete SSE events (may be multi-line: event: + data:)
                     const lines = buffer.split('\n');
                     buffer = lines.pop(); // keep incomplete line in buffer
 
+                    let pendingEventType = null;
                     for (const line of lines) {
-                        if (!line.startsWith('data: ')) continue;
+                        if (line.startsWith('event: ')) {
+                            pendingEventType = line.slice(7).trim();
+                            continue;
+                        }
+
+                        if (!line.startsWith('data: ')) {
+                            pendingEventType = null;
+                            continue;
+                        }
+
                         const payload = line.slice(6).trim();
-                        if (payload === '[DONE]') continue;
+                        if (payload === '[DONE]') { pendingEventType = null; continue; }
 
                         try {
                             const chunk = JSON.parse(payload);
+
+                            // Handle confirmation event — capture ID, show message
+                            if (pendingEventType === 'confirmation') {
+                                pendingConfirmationId = chunk.id;
+                                fullText += chunk.message;
+                                liveContent.innerHTML = renderMarkdown(fullText);
+                                scrollToBottom();
+                                pendingEventType = null;
+                                continue;
+                            }
+
+                            // Regular delta chunk
                             const delta = chunk.choices?.[0]?.delta?.content || '';
                             if (delta) {
-                                // Check if it's a tool status line
                                 if (delta.startsWith('Calling `')) {
                                     appendToolIndicator('tool', {}, { status: 'ok' });
                                 } else {
@@ -788,6 +809,7 @@
                         } catch (e) {
                             // skip malformed chunks
                         }
+                        pendingEventType = null;
                     }
                 }
 

@@ -308,8 +308,14 @@ async def run_agent_loop_streaming(
                 result_data = json.loads(result_str)
 
                 if result_data.get("status") == "confirmation_required":
-                    # Directly yield the confirmation message and finish the stream
-                    yield _sse_chunk(result_data["message"])
+                    # Yield a special confirmation event so the client captures the ID
+                    conf_id = result_data.get("confirmation_id", "")
+                    conf_payload = json.dumps({
+                        "type": "confirmation",
+                        "id": conf_id,
+                        "message": result_data["message"],
+                    })
+                    yield f"event: confirmation\ndata: {conf_payload}\n\n"
                     yield "data: [DONE]\n\n"
                     return
 
