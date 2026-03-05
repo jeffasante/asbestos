@@ -74,6 +74,7 @@ def _start_llama_server() -> subprocess.Popen:
         "--port", str(LLAMA_PORT),
         "-c", str(LLAMA_CTX_SIZE),
         "-n", str(1024),
+        "--jinja",
         "--flash-attn", "auto",
     ]
     
