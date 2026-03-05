@@ -50,11 +50,13 @@ Includes a dedicated runner for multimodal vision tasks. This component bridges 
 
 ### Agent & Connectivity (asbestos-agent)
 
-Includes a fully-featured local AI agent capable of tool execution (shell commands, file operations, system actions) against the host machine. Similar to intelligent background agents like Clawbot, but with a fundamentally different approach to connectivity: instead of relying on a centralized cloud service to proxy messages, it utilizes direct, secure port forwarding (via Cloudflare Tunnels, VS Code Dev Tunnels, or ngrok).
+Includes a fully-featured local AI assistant capable of tool execution (shell commands, file operations, system actions) against the host machine. This component turns the local llama.cpp engine into a proactive agent that can "do things" for the user, while maintaining strict privacy and security through direct, secure port forwarding (via Cloudflare Tunnels, VS Code Dev Tunnels, or ngrok).
 
 - **Approach**: A Python/FastAPI server wraps the local `llama-server` process to expose a standard OpenAI-compatible API (`/v1/chat/completions`). Public HTTPS tunnels forward this local port to the internet natively without a central broker.
-- **Capabilities**: Allows users to interact with and control their local computer securely from anywhere (e.g., a smartphone) via a self-hosted, responsive Chat UI.
-- **Safety**: Robust human-in-the-loop intercept mechanism pauses the agent's execution loop and requests user confirmation via the UI for any destructive commands or file writes.
+- **Multimodal Support**: Fully integrated **VLM (Vision Engine)** within the agent loop, allowing the agent to "see" and reason about attached images in the chat UI.
+- **Capabilities**: Proactive tool execution with smart error recovery (e.g., automatic `mkdir -p` for missing directories during file-write operations).
+- **Safety**: Robust **human-in-the-loop** intercept mechanism. The agent pauses its execution loop and requests user approval via a persistent confirmation ID system for any destructive commands or file writes.
+- **Accessibility**: Securely control your local computer from anywhere (e.g., a smartphone) via a self-hosted, responsive Web Chat UI.
 
 ---
 

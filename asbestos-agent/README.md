@@ -15,12 +15,12 @@ Public Tunnel (cloudflared / VS Code / ngrok)
      ▼
 asbestos-agent (FastAPI)  ←── http://localhost:8765
      │
-     ├── Agent Loop (multi-turn tool calling)
+     ├── Agent Loop (multi-turn tool calling + VLM)
      │     └── llama-server (localhost:8776)
      │
      └── Tool Executor
            ├── shell_exec  — run terminal commands
-           ├── file_rw     — read/write files
+           ├── file_rw     — read/write files (smart mkdir -p)
            └── os_action   — open URLs, send notifications
 ```
 
@@ -62,6 +62,18 @@ curl http://localhost:8765/v1/chat/completions \
 
 This means you can use it with **any OpenAI-compatible client** — just set the base URL to your tunnel address.
 
+### Multimodal (VLM) Support
+
+The agent supports **image analysis**. You can send images via the OpenAI-compatible API using `image_url` content blocks, or simply drag-and-drop an image into the built-in Chat UI.
+
+### Smart File Writing
+
+The `file_rw` tool is designed for autonomous resilience:
+
+- **Auto-mkdir**: Missing parent directories are created automatically (`mkdir -p`) during write operations.
+- **Smart Feedback**: If you try to read a non-existent file, the agent receives a hint to "create it first," preventing loops.
+- **Directory Listing**: If `file_rw` is called on a directory, it returns a listing of the contents instead of an error.
+
 ### Endpoints
 
 | Method | Path                   | Description                                  |
@@ -82,9 +94,14 @@ By default, the agent uses **human-in-the-loop** safety:
 - **Destructive commands** (`rm`, `kill`, `git push`, etc.) require your confirmation
 - **File writes** require your confirmation
 
-When a destructive action is needed, the agent will ask you in the chat:
+### Confirmation System
 
-> ⚠️ I need your approval to run: `rm -rf /tmp/old`. Reply **yes** to confirm.
+When a destructive action or file-write is requested, the server:
+
+1. Returns a `confirmation_required` status with a unique `confirmation_id`.
+2. Includes a preview of the changes in the tool result.
+3. The Chat UI intercepts this and prompts you for approval.
+4. Replying **yes** in the Chat UI automatically triggers a `POST /confirm/{id}` call to execute the action.
 
 To disable safety (use at your own risk):
 
