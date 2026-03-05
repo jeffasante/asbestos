@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Asbestos Agent</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f2f2f2;
+            --bg-action: #e0e0e0;
+            --text-primary: #000000;
+            --text-secondary: #666666;
+            --text-status: #8e8e93;
+            --accent: #000000;
+            --border: #f2f2f2;
+            --font-sans: 'Quicksand', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+            --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+            --radius-card: 24px;
+            --radius-btn: 50%;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: var(--font-sans);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            overflow: hidden;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Header ─────────────────────────────────── */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            background: var(--bg-primary);
+            z-index: 100;
+        }
+
+        .header-title {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #34c759;
+        }
+
+        /* ── Chat Area ──────────────────────────────── */
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            scroll-behavior: smooth;
+        }
+
+        .messages {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Welcome screen */
+        .welcome {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .welcome h1 {
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .welcome-subtitle {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-status);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+
+        /* Message rendering */
+        .message {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .message.assistant {
+            align-items: flex-start;
+        }
+
+        .message.user {
+            align-items: flex-end;
+        }
+
+        .message-content {
+            font-size: 16px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .message.assistant .message-content {
+            color: var(--text-primary);
+            max-width: 100%;
+        }
+
+        .message.user .message-content {
+            background: var(--bg-secondary);
+            padding: 12px 18px;
+            border-radius: 20px;
+            border-bottom-right-radius: 4px;
+            max-width: 80%;
+        }
+
+        /* Markdown styling inside messages */
+        .message-content p { margin-bottom: 12px; }
+        .message-content p:last-child { margin-bottom: 0; }
+        .message-content code {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+        .message-content pre {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px 0;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 13px;
+        }
+
+        .tool-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin: 8px 0;
+        }
+
+        .message-image {
+            max-width: 100%;
+            border-radius: 12px;
+            margin-top: 8px;
+            display: block;
+        }
+
+        /* ── Input Area ─────────────────────────────── */
+        .bottom-section {
+            padding: 20px;
+            background: var(--bg-primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .input-card {
+            width: 100%;
+            max-width: 600px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-card);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .preview-container {
+            display: none;
+            position: relative;
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--bg-action);
+        }
+
+        .preview-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .remove-preview {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .input-field {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            font-size: 16px;
+            font-weight: 600;
+            resize: none;
+            outline: none;
+            padding: 4px;
+            min-height: 24px;
+            max-height: 200px;
+        }
+
+        .input-field::placeholder {
+            color: var(--text-status);
+        }
+
+        .input-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-btn);
+            background: var(--bg-action);
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.2s;
+        }
+
+        .send-btn {
+            width: 36px;
+            height: 36px;
+            background: var(--text-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-btn);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .send-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .status-label {
+            font-size: 9px;
+            font-weight: 900;
+            color: var(--text-status);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        /* ── Typing Indicator ──────────────────────── */
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 8px 0;
+        }
+
+        .typing-indicator span {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--text-primary);
+            animation: blink 1.2s infinite both;
+            opacity: 0.2;
+        }
+
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+
+        /* ── SVG Icons ─────────────────────────────── */
+        .icon-plus { width: 14px; height: 14px; stroke-width: 3px; }
+        .icon-up { width: 20px; height: 20px; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 0px; }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <span class="header-title">Asbestos</span>
+        <div class="status-pill">
+            <span class="status-dot"></span>
+            <span>Connected</span>
+        </div>
+    </header>
+
+    <div class="chat-container" id="chatContainer">
+        <div class="messages" id="messages">
+            <div class="welcome" id="welcome">
+                <h1>HOW CAN I<br>HELP YOU?</h1>
+                <span class="welcome-subtitle">Local Intelligence Service</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-section">
+        <div class="input-card">
+            <div id="previewContainer" class="preview-container">
+                <img id="imagePreview" class="preview-image" src="">
+                <button class="remove-preview" onclick="clearImage()">×</button>
+            </div>
+            <textarea
+                id="inputField"
+                class="input-field"
+                rows="1"
+                placeholder="Message"
+                autofocus
+            ></textarea>
+            
+            <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageSelect(this)">
+            
+            <div class="input-actions">
+                <button class="action-btn" onclick="document.getElementById('imageInput').click()" title="Attach Image">
+                    <svg class="icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </button>
+
+                <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                    <svg class="icon-up" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-8h3l-4-4-4 4h3v4h2v-4z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <span class="status-label" id="statusLabel">Asbestos is ready</span>
+    </div>
+
+    <script>
+        const messagesEl = document.getElementById('messages');
+        const chatContainer = document.getElementById('chatContainer');
+        const inputField = document.getElementById('inputField');
+        const sendBtn = document.getElementById('sendBtn');
+        const welcomeEl = document.getElementById('welcome');
+        const statusLabel = document.getElementById('statusLabel');
+        const imageInput = document.getElementById('imageInput');
+        const previewContainer = document.getElementById('previewContainer');
+        const imagePreview = document.getElementById('imagePreview');
+
+        let conversationHistory = [];
+        let isProcessing = false;
+        let selectedImageBase64 = null;
+
+        inputField.addEventListener('input', () => {
+            inputField.style.height = 'auto';
+            inputField.style.height = Math.min(inputField.scrollHeight, 200) + 'px';
+            sendBtn.disabled = !inputField.value.trim() && !selectedImageBase64;
+        });
+
+        inputField.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        function handleImageSelect(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                selectedImageBase64 = e.target.result;
+                imagePreview.src = selectedImageBase64;
+                previewContainer.style.display = 'block';
+                sendBtn.disabled = false;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function clearImage() {
+            selectedImageBase64 = null;
+            imageInput.value = '';
+            previewContainer.style.display = 'none';
+            imagePreview.src = '';
+            sendBtn.disabled = !inputField.value.trim();
+        }
+
+        async function sendMessage() {
+            const text = inputField.value.trim();
+            if ((!text && !selectedImageBase64) || isProcessing) return;
+
+            isProcessing = true;
+            sendBtn.disabled = true;
+
+            if (welcomeEl) welcomeEl.style.display = 'none';
+
+            let userContent;
+            if (selectedImageBase64) {
+                userContent = [
+                    { type: 'text', text: text || 'Analyze this image.' },
+                    { type: 'image_url', image_url: { url: selectedImageBase64 } }
+                ];
+            } else {
+                userContent = text;
+            }
+
+            conversationHistory.push({ role: 'user', content: userContent });
+            appendMessage('user', text, selectedImageBase64);
+
+            const imageToSend = selectedImageBase64; // copy
+            clearImage();
+
+            inputField.value = '';
+            inputField.style.height = 'auto';
+            statusLabel.textContent = 'Thinking...';
+
+            const typingEl = showTyping();
+
+            try {
+                const response = await fetch('/v1/chat/completions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        model: 'asbestos-local',
+                        messages: conversationHistory,
+                        stream: false,
+                    }),
+                });
+
+                const data = await response.json();
+                const assistantMsg = data.choices?.[0]?.message?.content || 'No response.';
+
+                typingEl.remove();
+
+                const toolTrace = data._tool_trace || [];
+                for (const t of toolTrace) {
+                    appendToolIndicator(t.tool, t.args, t.result);
+                }
+
+                conversationHistory.push({ role: 'assistant', content: assistantMsg });
+                appendMessage('assistant', assistantMsg);
+
+            } catch (err) {
+                typingEl.remove();
+                appendMessage('assistant', `❌ Error: ${err.message}`);
+            }
+
+            isProcessing = false;
+            sendBtn.disabled = true;
+            statusLabel.textContent = 'Asbestos is ready';
+            inputField.focus();
+        }
+
+        function appendMessage(role, content, imageData = null) {
+            const div = document.createElement('div');
+            div.className = `message ${role}`;
+            
+            let innerHTML = '<div class="message-content">';
+            if (role === 'assistant') {
+                innerHTML += renderMarkdown(content);
+            } else {
+                if (imageData) {
+                    innerHTML += `<img src="${imageData}" class="message-image">`;
+                }
+                if (content) {
+                    innerHTML += `<div>${escapeHtml(content)}</div>`;
+                }
+            }
+            innerHTML += '</div>';
+            
+            div.innerHTML = innerHTML;
+            messagesEl.appendChild(div);
+            scrollToBottom();
+        }
+
+        function appendToolIndicator(tool, args, result) {
+            const div = document.createElement('div');
+            div.className = 'message assistant';
+            const statusStr = result?.status === 'ok' ? '✓' : result?.status === 'confirmation_required' ? '⏳' : '✗';
+            div.innerHTML = `<div class="tool-indicator">${statusStr} Executing ${tool}...</div>`;
+            messagesEl.appendChild(div);
+            scrollToBottom();
+        }
+
+        function showTyping() {
+            const div = document.createElement('div');
+            div.className = 'message assistant';
+            div.id = 'typing-indicator';
+            div.innerHTML = `<div class="typing-indicator"><span></span><span></span><span></span></div>`;
+            messagesEl.appendChild(div);
+            scrollToBottom();
+            return div;
+        }
+
+        function scrollToBottom() {
+            requestAnimationFrame(() => {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            });
+        }
+
+        function renderMarkdown(text) {
+            if (!text) return '';
+            let html = escapeHtml(text);
+            html = html.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
+            html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+            html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+            html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+            html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+            html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+            html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+            html = html.replace(/(<li>.*<\/li>\n?)+/gs, '<ul>$&</ul>');
+            html = html.replace(/\n/g, '<br>');
+            html = html.replace(/(<\/pre>)<br>/g, '$1');
+            return html;
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        async function checkHealth() {
+            try {
+                const r = await fetch('/health');
+                const d = await r.json();
+            } catch {}
+        }
+
+        setInterval(checkHealth, 15000);
+        checkHealth();
+        sendBtn.disabled = true;
+    </script>
+</body>
+</html>
