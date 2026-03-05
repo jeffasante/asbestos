@@ -194,7 +194,7 @@
             border-radius: 12px;
             padding: 0;
             margin: 12px 0;
-            overflow: hidden;
+            overflow-x: auto;
             font-family: var(--font-mono);
             font-size: 13px;
         }
@@ -203,7 +203,18 @@
             padding: 16px;
             background: none;
             color: inherit;
-            overflow-x: auto;
+            white-space: pre;
+        }
+        
+        @keyframes streamPulse {
+            0% { border-left-color: transparent; }
+            50% { border-left-color: var(--text-status); }
+            100% { border-left-color: transparent; }
+        }
+        .message.assistant.streaming .message-content {
+            border-left: 2px solid var(--text-status);
+            padding-left: 12px;
+            transition: all 0.2s;
         }
         .code-header {
             display: flex;
@@ -725,17 +736,16 @@
                     signal: currentAbortController.signal,
                 });
 
-                typingEl.remove();
-
                 // Create a live message bubble for streaming
                 const liveMsgDiv = document.createElement('div');
-                liveMsgDiv.className = 'message assistant';
+                liveMsgDiv.className = 'message assistant streaming';
                 const liveContent = document.createElement('div');
                 liveContent.className = 'message-content';
                 liveMsgDiv.appendChild(liveContent);
                 messagesEl.appendChild(liveMsgDiv);
 
                 let fullText = '';
+                let firstToken = true;
 
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
@@ -744,6 +754,12 @@
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
+
+                    if (firstToken) {
+                        typingEl.remove();
+                        statusLabel.textContent = 'Asbestos is streaming...';
+                        firstToken = false;
+                    }
 
                     buffer += decoder.decode(value, { stream: true });
 
@@ -776,6 +792,7 @@
                 }
 
                 // Final render with full markdown
+                liveMsgDiv.classList.remove('streaming');
                 liveContent.innerHTML = renderMarkdown(fullText);
                 conversationHistory.push({ role: 'assistant', content: fullText });
 
