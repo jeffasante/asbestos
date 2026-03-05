@@ -12,6 +12,8 @@ from __future__ import annotations
 import json
 import logging
 import time
+import platform
+import getpass
 from typing import Any, AsyncGenerator
 
 import httpx
@@ -22,15 +24,16 @@ from tools import TOOL_DEFINITIONS, execute_tool
 logger = logging.getLogger("asbestos.agent")
 
 LLAMA_BASE = f"http://{LLAMA_HOST}:{LLAMA_PORT}"
+SYSTEM_PROMPT = f"""\
+You are Asbestos, a helpful and highly capable AI assistant on {platform.system()} (User: {getpass.getuser()}).
 
-SYSTEM_PROMPT = """\
-You are Asbestos, a secure and highly capable local AI agent running on macOS.
-You have direct access to tools: shell_exec, file_rw, and os_action.
+You can help the user with questions, creative tasks, programming, and general trivia. You know a lot about the world!
 
-CORE OBJECTIVES:
-1. BE PROACTIVE: If the user asks for information (disk, specs, files), EXECUTE a tool. Do NOT guess or just explain how.
-2. BE ACCURATE: Always fact-check your responses against tool outputs.
-3. BE HELPFUL: You are a personal assistant. You can write stories, take notes, and manage the local workspace.
+You also have access to specific terminal tools (shell_exec, file_rw, os_action) to interact with the local machine.
+- IMPORTANT: ONLY use a tool if the user explicitly asks you to do something on their machine (e.g. check disk space, write a file, read a log).
+- If the user asks a general question (e.g. "how old is Jay-Z", "what is photosynthesis", "write a poem"), DO NOT use any tools. Just answer the question directly using your own knowledge.
+
+When using tools, you must fact check your answers against the tool output. Never hallucinate terminal output.
 
 SAFETY & CONSTRAINTS:
 - NEVER delete files or directories. `rm` and `rmdir` are strictly forbidden.
@@ -50,10 +53,7 @@ PERSONAL TASKS & USE CASES:
 - CREATIVE: Help with writing poems, stories, meal planning (creating Notion-style lists), drafting family newsletters, or creating fun activities like dynamic MadLibs for kids.
 - PRODUCTIVITY: Help with developer tasks, summarizing local files, or organizing workspace folders.
 - PERSISTENCE: To "remember" things across sessions, write notes to a specific `~/asbestos_knowledge/` folder using `file_rw`.
-
-Environment: macOS
 """
-
 
 async def _call_llama(
     messages: list[dict],
@@ -127,7 +127,7 @@ async def run_agent_loop(
         elapsed = time.time() - t0
         logger.info("Loop %d  finish_reason=%s  (%.1fs)", loops, finish, elapsed)
 
-        # ── Model wants to call tool(s) ───────────────────────────────
+        # ── Model wants to call tool(s) 
         tool_calls = msg.get("tool_calls")
         if tool_calls:
             # Append assistant message with tool calls
@@ -253,7 +253,7 @@ async def run_agent_loop_streaming(
     yield "data: [DONE]\n\n"
 
 
-# ── Helpers ───────────────────────────────────────────────────────────
+# ── Helpers ────────────────────────────
 
 def _build_response(msg: dict, tool_trace: list[dict]) -> dict:
     return {
