@@ -634,27 +634,64 @@
                     body: JSON.stringify({
                         model: 'asbestos-local',
                         messages: conversationHistory,
-                        stream: false,
+                        stream: true,
                     }),
                     signal: currentAbortController.signal,
                 });
 
-                const data = await response.json();
-                const assistantMsg = data.choices?.[0]?.message?.content || 'No response.';
-
                 typingEl.remove();
 
-                const toolTrace = data._tool_trace || [];
-                for (const t of toolTrace) {
-                    appendToolIndicator(t.tool, t.args, t.result);
-                    // Track confirmation ID if one was returned
-                    if (t.result?.status === 'confirmation_required' && t.result?.confirmation_id) {
-                        pendingConfirmationId = t.result.confirmation_id;
+                // Create a live message bubble for streaming
+                const liveMsgDiv = document.createElement('div');
+                liveMsgDiv.className = 'message assistant';
+                const liveContent = document.createElement('div');
+                liveContent.className = 'message-content';
+                liveMsgDiv.appendChild(liveContent);
+                messagesEl.appendChild(liveMsgDiv);
+
+                let fullText = '';
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    buffer += decoder.decode(value, { stream: true });
+
+                    // Process complete SSE lines
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop(); // keep incomplete line in buffer
+
+                    for (const line of lines) {
+                        if (!line.startsWith('data: ')) continue;
+                        const payload = line.slice(6).trim();
+                        if (payload === '[DONE]') continue;
+
+                        try {
+                            const chunk = JSON.parse(payload);
+                            const delta = chunk.choices?.[0]?.delta?.content || '';
+                            if (delta) {
+                                // Check if it's a tool status line
+                                if (delta.startsWith('Calling `')) {
+                                    appendToolIndicator('tool', {}, { status: 'ok' });
+                                } else {
+                                    fullText += delta;
+                                    liveContent.innerHTML = renderMarkdown(fullText);
+                                    scrollToBottom();
+                                }
+                            }
+                        } catch (e) {
+                            // skip malformed chunks
+                        }
                     }
                 }
 
-                conversationHistory.push({ role: 'assistant', content: assistantMsg });
-                appendMessage('assistant', assistantMsg);
+                // Final render with full markdown
+                liveContent.innerHTML = renderMarkdown(fullText);
+                conversationHistory.push({ role: 'assistant', content: fullText });
 
             } catch (err) {
                 typingEl.remove();
