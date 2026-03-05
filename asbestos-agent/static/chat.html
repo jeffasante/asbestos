@@ -55,6 +55,31 @@
             text-transform: uppercase;
         }
 
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .clear-btn {
+            background: none;
+            border: none;
+            color: var(--text-status);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 12px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .clear-btn:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
         .status-pill {
             display: flex;
             align-items: center;
@@ -306,6 +331,29 @@
             cursor: not-allowed;
         }
 
+        .stop-btn {
+            width: 36px;
+            height: 36px;
+            background: #ff3b30;
+            color: white;
+            border: none;
+            border-radius: var(--radius-btn);
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .stop-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .drop-zone-active {
+            box-shadow: inset 0 0 0 4px var(--text-status);
+            opacity: 0.8;
+        }
+
         .status-label {
             font-size: 9px;
             font-weight: 900;
@@ -350,9 +398,12 @@
 
     <header class="header">
         <span class="header-title">Asbestos</span>
-        <div class="status-pill">
-            <span class="status-dot"></span>
-            <span>Connected</span>
+        <div class="header-actions">
+            <button class="clear-btn" onclick="clearConversation()" title="Clear Chat">Clear</button>
+            <div class="status-pill">
+                <span class="status-dot"></span>
+                <span>Connected</span>
+            </div>
         </div>
     </header>
 
@@ -360,7 +411,7 @@
         <div class="messages" id="messages">
             <div class="welcome" id="welcome">
                 <h1>HOW CAN I<br>HELP YOU?</h1>
-                <span class="welcome-subtitle">Local Intelligence Service</span>
+                <span class="welcome-subtitle">Private. Personal. Powerful.</span>
             </div>
         </div>
     </div>
@@ -394,6 +445,12 @@
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-8h3l-4-4-4 4h3v4h2v-4z"/>
                     </svg>
                 </button>
+
+                <button class="stop-btn" id="stopBtn" onclick="stopConversation()" title="Stop Generation">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                        <rect x="4" y="4" width="16" height="16" rx="2" />
+                    </svg>
+                </button>
             </div>
         </div>
         
@@ -405,6 +462,7 @@
         const chatContainer = document.getElementById('chatContainer');
         const inputField = document.getElementById('inputField');
         const sendBtn = document.getElementById('sendBtn');
+        const stopBtn = document.getElementById('stopBtn');
         const welcomeEl = document.getElementById('welcome');
         const statusLabel = document.getElementById('statusLabel');
         const imageInput = document.getElementById('imageInput');
@@ -415,6 +473,7 @@
         let isProcessing = false;
         let selectedImageBase64 = null;
         let pendingConfirmationId = null;
+        let currentAbortController = null;
 
         inputField.addEventListener('input', () => {
             inputField.style.height = 'auto';
@@ -429,18 +488,61 @@
             }
         });
 
+        // ── Drag & Drop ──────────────────────────────
+        window.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            document.body.classList.add('drop-zone-active');
+        });
+
+        window.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            if (e.relatedTarget === null) {
+                document.body.classList.remove('drop-zone-active');
+            }
+        });
+
+        window.addEventListener('drop', (e) => {
+            e.preventDefault();
+            document.body.classList.remove('drop-zone-active');
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].type.startsWith('image/')) {
+                handleFile(files[0]);
+            }
+        });
+
         function handleImageSelect(input) {
-            const file = input.files[0];
+            handleFile(input.files[0]);
+        }
+
+        function handleFile(file) {
             if (!file) return;
 
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                selectedImageBase64 = e.target.result;
+            // Resize image client-side to avoid 400 errors from llama-server
+            // The model's image_max_pixels is ~4MP; large phone photos will fail
+            const MAX_DIM = 1024;
+            const img = new Image();
+            img.onload = () => {
+                let { width, height } = img;
+                if (width > MAX_DIM || height > MAX_DIM) {
+                    if (width > height) {
+                        height = Math.round(height * (MAX_DIM / width));
+                        width = MAX_DIM;
+                    } else {
+                        width = Math.round(width * (MAX_DIM / height));
+                        height = MAX_DIM;
+                    }
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                selectedImageBase64 = canvas.toDataURL('image/jpeg', 0.85);
                 imagePreview.src = selectedImageBase64;
                 previewContainer.style.display = 'block';
                 sendBtn.disabled = false;
             };
-            reader.readAsDataURL(file);
+            img.src = URL.createObjectURL(file);
         }
 
         function clearImage() {
@@ -456,9 +558,12 @@
             if ((!text && !selectedImageBase64) || isProcessing) return;
 
             isProcessing = true;
-            sendBtn.disabled = true;
-
+            sendBtn.style.display = 'none';
+            stopBtn.style.display = 'flex';
+            
             if (welcomeEl) welcomeEl.style.display = 'none';
+
+            currentAbortController = new AbortController();
 
             // Check if user is confirming a pending action
             if (pendingConfirmationId && text.toLowerCase() === 'yes') {
@@ -489,6 +594,8 @@
 
                 pendingConfirmationId = null;
                 isProcessing = false;
+                sendBtn.style.display = 'flex';
+                stopBtn.style.display = 'none';
                 sendBtn.disabled = true;
                 statusLabel.textContent = 'Asbestos is ready';
                 inputField.focus();
@@ -529,6 +636,7 @@
                         messages: conversationHistory,
                         stream: false,
                     }),
+                    signal: currentAbortController.signal,
                 });
 
                 const data = await response.json();
@@ -550,13 +658,47 @@
 
             } catch (err) {
                 typingEl.remove();
-                appendMessage('assistant', `Error: ${err.message}`);
+                if (err.name === 'AbortError') {
+                    appendMessage('assistant', '_Request stopped._');
+                } else {
+                    appendMessage('assistant', `Error: ${err.message}`);
+                }
             }
 
             isProcessing = false;
+            sendBtn.style.display = 'flex';
+            stopBtn.style.display = 'none';
             sendBtn.disabled = true;
             statusLabel.textContent = 'Asbestos is ready';
             inputField.focus();
+            currentAbortController = null;
+        }
+
+        function stopConversation() {
+            if (currentAbortController) {
+                currentAbortController.abort();
+            }
+        }
+
+        function clearConversation() {
+            if (isProcessing) stopConversation();
+            conversationHistory = [];
+            messagesEl.innerHTML = `
+                <div class="welcome" id="welcome">
+                    <h1>HOW CAN I<br>HELP YOU?</h1>
+                    <span class="welcome-subtitle">Private. Personal. Powerful.</span>
+                </div>
+            `;
+            // Re-assign references since we replaced HTML
+            const newWelcome = document.getElementById('welcome');
+            // Actually just leave it empty if they clear it
+            if (newWelcome) newWelcome.style.display = 'flex';
+            
+            pendingConfirmationId = null;
+            clearImage();
+            inputField.value = '';
+            inputField.style.height = 'auto';
+            statusLabel.textContent = 'Asbestos is ready';
         }
 
         function appendMessage(role, content, imageData = null) {
