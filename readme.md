@@ -58,6 +58,7 @@ Includes a fully-featured local AI assistant capable of tool execution (shell co
 - **Safety**: Robust **human-in-the-loop** intercept mechanism. The agent pauses its execution loop and requests user approval via a persistent confirmation ID system for any destructive commands or file writes.
 - **Accessibility**: Securely control your local computer from anywhere (e.g., a smartphone) via a self-hosted, responsive Web Chat UI.
 
+Readmore: [asbestos-agent/README.md](asbestos-agent/README.md)
 ---
 
 ## Model Sources

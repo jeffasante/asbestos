@@ -60,15 +60,31 @@ async def _call_llama(
     stream: bool = False,
 ) -> httpx.Response:
     """Make a request to the local llama-server."""
+    # Detect if any message contains image content.
+    # llama-server doesn't support tools + images in the same request,
+    # so we omit tools when images are present (vision-only mode).
+    has_images = False
+    for msg in messages:
+        content = msg.get("content")
+        if isinstance(content, list):
+            for part in content:
+                if isinstance(part, dict) and part.get("type") == "image_url":
+                    has_images = True
+                    break
+        if has_images:
+            break
+
     async with httpx.AsyncClient(timeout=120.0) as client:
         payload: dict[str, Any] = {
             "model": "local",
             "messages": messages,
-            "tools": TOOL_DEFINITIONS,
             "max_tokens": LLAMA_N_PREDICT,
             "temperature": 0.7,
             "stream": stream,
         }
+        if not has_images:
+            payload["tools"] = TOOL_DEFINITIONS
+
         return await client.post(
             f"{LLAMA_BASE}/v1/chat/completions",
             json=payload,
