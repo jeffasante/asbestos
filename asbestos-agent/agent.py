@@ -55,9 +55,76 @@ PERSONAL TASKS & USE CASES:
 - PERSISTENCE: To "remember" things across sessions, write notes to a specific `~/asbestos_knowledge/` folder using `file_rw`.
 """
 
+# Keywords that indicate the user wants a LOCAL system action (tools needed).
+# If none of these appear in the latest user message, we skip sending tools
+# entirely — the small model can't reliably decide on its own.
+
+# Unambiguous keywords — if ANY of these appear, tools are needed.
+_STRONG_TOOL_KEYWORDS = {
+    # filesystem (unambiguous)
+    "folder", "directory", "path", "rename", "ls", "cat",
+    # system / hardware
+    "disk", "storage", "ram", "cpu", "chip", "specs", "hardware",
+    "process", "port", "network", "wifi", "bluetooth",
+    # commands / actions
+    "execute", "install", "brew", "pip", "npm", "git", "command",
+    "terminal", "shell", "script", "scan", "monitor", "kill",
+    # app-level
+    "notification", "notify", "alert", "screenshot", "clipboard",
+    "volume", "brightness", "battery",
+    # explicit tool references
+    "shell_exec", "file_rw", "os_action",
+}
+
+# Ambiguous keywords — only count if paired with a system-context word.
+_WEAK_TOOL_KEYWORDS = {"file", "files", "write", "read", "save", "create",
+                       "open", "copy", "move", "find", "check", "run", "list",
+                       "memory", "system", "remind", "tool"}
+_SYSTEM_CONTEXT_WORDS = {"file", "files", "folder", "disk", "directory",
+                         "system", "server", "code", "log", "config", "txt",
+                         "json", "csv", "py", "sh", "home", "desktop",
+                         "downloads", "documents", "~/", "/"}
+
+
+def _needs_tools(messages: list[dict]) -> bool:
+    """Decide if the latest user message looks like it needs local tools.
+
+    Uses a two-tier keyword system:
+    - Strong keywords always trigger tools (e.g. "disk", "install", "terminal")
+    - Weak keywords only trigger tools if accompanied by system-context words
+      (e.g. "write" alone could mean "write a poem", but "write" + "file" = tools)
+    """
+    # Find the last user message
+    last_user_text = ""
+    for msg in reversed(messages):
+        if msg.get("role") == "user":
+            content = msg.get("content", "")
+            if isinstance(content, str):
+                last_user_text = content
+            elif isinstance(content, list):
+                last_user_text = " ".join(
+                    p.get("text", "") for p in content
+                    if isinstance(p, dict) and p.get("type") == "text"
+                )
+            break
+
+    words = set(last_user_text.lower().split())
+
+    # Strong match — always needs tools
+    if words & _STRONG_TOOL_KEYWORDS:
+        return True
+
+    # Weak match — only if system-context words are also present
+    if words & _WEAK_TOOL_KEYWORDS and words & _SYSTEM_CONTEXT_WORDS:
+        return True
+
+    return False
+
+
 async def _call_llama(
     messages: list[dict],
     stream: bool = False,
+    use_tools: bool = True,
 ) -> httpx.Response:
     """Make a request to the local llama-server."""
     # Detect if any message contains image content.
@@ -82,7 +149,7 @@ async def _call_llama(
             "temperature": 0.7,
             "stream": stream,
         }
-        if not has_images:
+        if use_tools and not has_images:
             payload["tools"] = TOOL_DEFINITIONS
 
         return await client.post(
@@ -107,13 +174,15 @@ async def run_agent_loop(
 
     tool_trace: list[dict] = []
     loops = 0
+    use_tools = _needs_tools(messages)
+    logger.info("Tool gate: %s (use_tools=%s)", request_id, use_tools)
 
     while loops < MAX_AGENT_LOOPS:
         loops += 1
         t0 = time.time()
 
         try:
-            resp = await _call_llama(messages, stream=False)
+            resp = await _call_llama(messages, stream=False, use_tools=use_tools)
             resp.raise_for_status()
         except httpx.HTTPError as e:
             logger.error("llama-server request failed: %s", e)
@@ -196,12 +265,13 @@ async def run_agent_loop_streaming(
         messages = [{"role": "system", "content": SYSTEM_PROMPT}] + messages
 
     loops = 0
+    use_tools = _needs_tools(messages)
 
     while loops < MAX_AGENT_LOOPS:
         loops += 1
 
         try:
-            resp = await _call_llama(messages, stream=False)
+            resp = await _call_llama(messages, stream=False, use_tools=use_tools)
             resp.raise_for_status()
         except httpx.HTTPError as e:
             yield _sse_chunk(f"Error contacting inference backend: {e}")
