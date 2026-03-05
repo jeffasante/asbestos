@@ -109,9 +109,17 @@ def _needs_tools(messages: list[dict]) -> bool:
             break
 
     words = set(last_user_text.lower().split())
+    text_lower = last_user_text.lower()
 
     # Strong match — always needs tools
     if words & _STRONG_TOOL_KEYWORDS:
+        return True
+
+    # File path detected — always needs tools
+    # Catches "save it to /Users/jeff/..." or "write to ~/notes.txt"
+    if any(w.startswith('/') or w.startswith('~/') for w in words):
+        return True
+    if any(ext in text_lower for ext in ['.txt', '.py', '.sh', '.json', '.csv', '.md', '.log']):
         return True
 
     # Weak match — only if system-context words are also present

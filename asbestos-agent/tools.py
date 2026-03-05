@@ -213,8 +213,9 @@ TOOL_DEFINITIONS = [
             "name": "shell_exec",
             "description": (
                 "Execute a shell command on the local machine and return "
-                "stdout, stderr, and exit code.  Use for system info, "
-                "file listings, git operations, running scripts, etc."
+                "stdout, stderr, and exit code. Use for system info, "
+                "file listings, git operations, running scripts, etc. "
+                "Do NOT use this to write or save files — use file_rw instead."
             ),
             "parameters": {
                 "type": "object",
@@ -233,9 +234,10 @@ TOOL_DEFINITIONS = [
         "function": {
             "name": "file_rw",
             "description": (
-                "Read from a file or directory, or write to a file.  When writing, "
-                "missing parent directories ARE created automatically.  "
-                "To read, provide only 'path'.  To write, also provide 'content'."
+                "Read or write a file. ALWAYS use this to save content to a file. "
+                "To read: provide only 'path'. "
+                "To write/save: provide both 'path' and 'content'. "
+                "Missing parent directories are created automatically."
             ),
             "parameters": {
                 "type": "object",
@@ -246,7 +248,7 @@ TOOL_DEFINITIONS = [
                     },
                     "content": {
                         "type": "string",
-                        "description": "Content to write.  Omit to read.",
+                        "description": "Content to write. Omit to read.",
                     },
                 },
                 "required": ["path"],
