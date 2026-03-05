@@ -1,10 +1,10 @@
 # 🧶 Asbestos
 
-Asbestos is a high-performance cross-platform research project demonstrating the integration of the llama.cpp C++ inference engine into native mobile and desktop environments. This project showcases the ability to run Large Language Models (LLMs) and Multimodal Vision models locally on consumer-grade hardware (cpu) with minimal latency and high privacy.
+Asbestos is a high-performance cross-platform research project demonstrating the integration of the llama.cpp C++ inference engine into native mobile and desktop environments, as well as a fully autonomous local agent accessible via the web. This project showcases the ability to run Large Language Models (LLMs) and Multimodal Vision models locally on consumer-grade hardware (CPU) with minimal latency and high privacy, while securely exposing these capabilities remotely using direct port forwarding.
 
 <div align="center">
   <img src="https://github.com/jeffasante/asbestos/raw/main/assets/ios-screenshot.png" alt="iOS App Screenshot" width="250" style="margin-right: 20px;" />
-  <video src="https://github.com/jeffasante/asbestos/raw/main/assets/cli.mp4" width="500" controls autoplay loop muted></video>
+  <img src="https://github.com/jeffasante/asbestos/raw/main/assets/cli.gif" alt="CLI Demo" width="500" />
 </div>
 
 ## Project Overview
@@ -47,6 +47,14 @@ Includes a dedicated runner for multimodal vision tasks. This component bridges 
 
 - **Tools**: Custom `vision.sh` bridge using `llama-cli`.
 - **Capabilities**: Local image understanding, OCR, and descriptive analysis without external APIs.
+
+### Agent & Connectivity (asbestos-agent)
+
+Includes a fully-featured local AI agent capable of tool execution (shell commands, file operations, system actions) against the host machine. Similar to intelligent background agents like Clawbot, but with a fundamentally different approach to connectivity: instead of relying on a centralized cloud service to proxy messages, it utilizes direct, secure port forwarding (via Cloudflare Tunnels, VS Code Dev Tunnels, or ngrok).
+
+- **Approach**: A Python/FastAPI server wraps the local `llama-server` process to expose a standard OpenAI-compatible API (`/v1/chat/completions`). Public HTTPS tunnels forward this local port to the internet natively without a central broker.
+- **Capabilities**: Allows users to interact with and control their local computer securely from anywhere (e.g., a smartphone) via a self-hosted, responsive Chat UI.
+- **Safety**: Robust human-in-the-loop intercept mechanism pauses the agent's execution loop and requests user confirmation via the UI for any destructive commands or file writes.
 
 ---
 

@@ -1,6 +1,9 @@
 # macOS
 .DS_Store
 
+__pycache__
+.venv
+
 # Android Artifacts
 asbestos-android/.gradle/
 asbestos-android/build/
@@ -29,3 +32,5 @@ asbestos-ios/DerivedData/
 # Keep the XCFramework though!
 !asbestos-ios/Frameworks/llama.xcframework/
 !asbestos-ios-app/Frameworks/llama.xcframework/
+
+asbestos/asbestos-agent/asbestos_agent_walkthrough.md

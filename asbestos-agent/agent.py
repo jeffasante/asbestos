@@ -137,25 +137,12 @@ async def run_agent_loop(
 
                 # If confirmation required, break the loop early
                 if result_data.get("status") == "confirmation_required":
-                    # Tell the model what happened so it can relay to the user
-                    messages.append({
-                        "role": "tool",
-                        "tool_call_id": tc["id"],
-                        "content": result_str,
-                    })
-                    # One more LLM call to produce the user-facing message
-                    try:
-                        relay_resp = await _call_llama(messages, stream=False)
-                        relay_resp.raise_for_status()
-                        relay_data = relay_resp.json()
-                        relay_msg = relay_data["choices"][0]["message"]
-                        return _build_response(relay_msg, tool_trace)
-                    except Exception:
-                        # Fallback: return the confirmation directly
-                        return _build_response(
-                            {"role": "assistant", "content": result_data["message"]},
-                            tool_trace,
-                        )
+                    # For small models, relaying the confirmation request often fails or returns empty content.
+                    # We'll return the tool's message directly to ensure the user sees it.
+                    return _build_response(
+                        {"role": "assistant", "content": result_data["message"]},
+                        tool_trace,
+                    )
 
                 # Append tool result
                 messages.append({
@@ -173,7 +160,7 @@ async def run_agent_loop(
     return _build_response(
         {
             "role": "assistant",
-            "content": "⚠️ I hit the maximum number of tool-calling iterations. "
+            "content": "I hit the maximum number of tool-calling iterations. "
                        "Here's what I've done so far — please let me know how to proceed.",
         },
         tool_trace,
@@ -221,17 +208,13 @@ async def run_agent_loop_streaming(
                     fn_args = {"_raw": tc["function"]["arguments"]}
 
                 # Stream a status update to the client
-                yield _sse_chunk(f"⚙️ Calling `{fn_name}({json.dumps(fn_args)[:120]})`...\n\n")
+                yield _sse_chunk(f"Calling `{fn_name}({json.dumps(fn_args)[:120]})`...\n\n")
 
                 result_str = await execute_tool(fn_name, fn_args, request_id)
                 result_data = json.loads(result_str)
 
                 if result_data.get("status") == "confirmation_required":
-                    messages.append({
-                        "role": "tool",
-                        "tool_call_id": tc["id"],
-                        "content": result_str,
-                    })
+                    # Directly yield the confirmation message and finish the stream
                     yield _sse_chunk(result_data["message"])
                     yield "data: [DONE]\n\n"
                     return
@@ -250,7 +233,7 @@ async def run_agent_loop_streaming(
         yield "data: [DONE]\n\n"
         return
 
-    yield _sse_chunk("⚠️ Maximum tool-calling iterations reached.")
+    yield _sse_chunk("Maximum tool-calling iterations reached.")
     yield "data: [DONE]\n\n"
 
 

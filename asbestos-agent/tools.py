@@ -18,7 +18,7 @@ from typing import Any
 
 from config import SAFE_COMMAND_PREFIXES, AUTONOMOUS
 
-# ── Pending confirmations store ───────────────────────────────────────
+# ── Pending confirmations store
 # Maps request_id → { "tool": ..., "args": ..., "description": ... }
 _pending_confirmations: dict[str, dict[str, Any]] = {}
 
@@ -31,7 +31,7 @@ def pop_pending(request_id: str) -> dict[str, Any] | None:
     return _pending_confirmations.pop(request_id, None)
 
 
-# ── Safety checker ────────────────────────────────────────────────────
+# ── Safety checker
 def _is_safe_command(cmd: str) -> bool:
     """Return True if the command is considered read-only."""
     if AUTONOMOUS:
@@ -53,7 +53,7 @@ def _is_safe_command(cmd: str) -> bool:
     return False
 
 
-# ── Tool: shell_exec ──────────────────────────────────────────────────
+# ── Tool: shell_exec 
 async def shell_exec(command: str, request_id: str | None = None) -> dict[str, Any]:
     """
     Execute a shell command.  If the command looks destructive and we are
@@ -70,7 +70,7 @@ async def shell_exec(command: str, request_id: str | None = None) -> dict[str, A
         return {
             "status": "confirmation_required",
             "confirmation_id": conf_id,
-            "message": f"⚠️  I need your approval to run this command:\n```\n{command}\n```\nReply **yes** to confirm.",
+            "message": f"I need your approval to run this command:\n```\n{command}\n```\nReply **yes** to confirm.",
         }
 
     try:
@@ -93,7 +93,7 @@ async def shell_exec(command: str, request_id: str | None = None) -> dict[str, A
         return {"status": "error", "message": str(e)}
 
 
-# ── Tool: file_rw ────────────────────────────────────────────────────
+# ── Tool: file_rw
 async def file_rw(
     path: str,
     content: str | None = None,
@@ -107,21 +107,40 @@ async def file_rw(
 
     # Read
     if content is None:
+        if not resolved.exists():
+            return {
+                "status": "ok",
+                "path": str(resolved),
+                "type": "not_found",
+                "content": f"Path does not exist yet. To create it, call file_rw again with path='{path}' and content='your content here'.",
+            }
+
+        if resolved.is_dir():
+            files = [f.name + ("/" if f.is_dir() else "") for f in resolved.iterdir()]
+            return {
+                "status": "ok",
+                "path": str(resolved),
+                "type": "directory",
+                "content": "\n".join(files) if files else "(empty directory)",
+            }
+
         try:
             text = resolved.read_text(errors="replace")
-            # Truncate very large files
             if len(text) > 20_000:
                 text = text[:20_000] + f"\n\n... [truncated, total {len(text)} chars]"
-            return {"status": "ok", "path": str(resolved), "content": text}
-        except FileNotFoundError:
-            return {"status": "error", "message": f"File not found: {resolved}"}
+            return {"status": "ok", "path": str(resolved), "type": "file", "content": text}
         except Exception as e:
-            return {"status": "error", "message": str(e)}
+            return {"status": "error", "message": f"Could not read {resolved}: {e}"}
 
     # Write — needs confirmation
     if not AUTONOMOUS:
         conf_id = request_id or os.urandom(8).hex()
-        preview = content[:500] + "..." if len(content) > 500 else content
+        
+        # Guard against non-string content (hallucinations)
+        if not isinstance(content, str):
+            content = json.dumps(content, indent=2)
+
+        preview = content[:500] + ("..." if len(content) > 500 else "")
         _pending_confirmations[conf_id] = {
             "tool": "file_rw",
             "args": {"path": path, "content": content},
@@ -131,7 +150,7 @@ async def file_rw(
             "status": "confirmation_required",
             "confirmation_id": conf_id,
             "message": (
-                f"⚠️  I need your approval to write to `{resolved}`:\n"
+                f"I need your approval to write to `{resolved}`:\n"
                 f"```\n{preview}\n```\n"
                 f"Reply **yes** to confirm."
             ),
@@ -145,7 +164,7 @@ async def file_rw(
         return {"status": "error", "message": str(e)}
 
 
-# ── Tool: os_action ───────────────────────────────────────────────────
+# ── Tool: os_action 
 async def os_action(
     action_type: str,
     payload: str = "",
@@ -186,7 +205,7 @@ async def os_action(
     return {"status": "error", "message": f"Unknown action type: {action_type}"}
 
 
-# ── Tool registry (OpenAI function-calling format) ────────────────────
+# ── Tool registry (OpenAI function-calling format) 
 TOOL_DEFINITIONS = [
     {
         "type": "function",
@@ -214,10 +233,9 @@ TOOL_DEFINITIONS = [
         "function": {
             "name": "file_rw",
             "description": (
-                "Read or write a file.  To read, provide only 'path'.  "
-                "To write, also provide 'content'.  Paths may use ~ for home."
-                "Read or write a file.  When writing, missing parent directories ARE created automatically.  "
-                "To read, provide only 'path'.  To write, also provide 'content'.  Paths may use ~ for home."
+                "Read from a file or directory, or write to a file.  When writing, "
+                "missing parent directories ARE created automatically.  "
+                "To read, provide only 'path'.  To write, also provide 'content'."
             ),
             "parameters": {
                 "type": "object",
@@ -263,7 +281,7 @@ TOOL_DEFINITIONS = [
 ]
 
 
-# ── Dispatcher ────────────────────────────────────────────────────────
+# ── Dispatcher────
 TOOL_MAP = {
     "shell_exec": shell_exec,
     "file_rw": file_rw,
@@ -277,9 +295,24 @@ async def execute_tool(name: str, arguments: dict[str, Any], request_id: str | N
     if fn is None:
         return json.dumps({"status": "error", "message": f"Unknown tool: {name}"})
 
-    # Inject request_id for confirmation tracking
-    if "request_id" in fn.__code__.co_varnames:
-        arguments["request_id"] = request_id
+    try:
+        # Filter arguments to match function signature
+        obj = fn
+        if hasattr(fn, "__wrapped__"): # handle wrappers
+            obj = fn.__wrapped__
+        
+        valid_args = obj.__code__.co_varnames[:obj.__code__.co_argcount]
+        filtered_args = {k: v for k, v in arguments.items() if k in valid_args}
 
-    result = await fn(**arguments)
-    return json.dumps(result, ensure_ascii=False)
+        # Inject request_id for confirmation tracking if needed
+        if "request_id" in valid_args:
+            filtered_args["request_id"] = request_id
+
+        result = await fn(**filtered_args)
+        return json.dumps(result, ensure_ascii=False)
+    except Exception as e:
+        logger.error(f"Error executing tool {name}: {e}", exc_info=True)
+        return json.dumps({
+            "status": "error", 
+            "message": f"Execution error in {name}: {str(e)}"
+        })

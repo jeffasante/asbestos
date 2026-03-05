@@ -414,6 +414,7 @@
         let conversationHistory = [];
         let isProcessing = false;
         let selectedImageBase64 = null;
+        let pendingConfirmationId = null;
 
         inputField.addEventListener('input', () => {
             inputField.style.height = 'auto';
@@ -459,6 +460,44 @@
 
             if (welcomeEl) welcomeEl.style.display = 'none';
 
+            // Check if user is confirming a pending action
+            if (pendingConfirmationId && text.toLowerCase() === 'yes') {
+                appendMessage('user', text);
+                inputField.value = '';
+                inputField.style.height = 'auto';
+                statusLabel.textContent = 'Confirming...';
+
+                const typingEl = showTyping();
+                try {
+                    const confResp = await fetch(`/confirm/${pendingConfirmationId}`, {
+                        method: 'POST',
+                    });
+                    const confData = await confResp.json();
+                    typingEl.remove();
+
+                    if (confData.status === 'ok') {
+                        appendToolIndicator('file_rw', {}, confData);
+                        appendMessage('assistant', `Done! File saved to \`${confData.path}\` (${confData.bytes_written} bytes).`);
+                        conversationHistory.push({ role: 'assistant', content: `File saved to ${confData.path}` });
+                    } else {
+                        appendMessage('assistant', `Error: ${confData.message || 'Unknown error'}`);
+                    }
+                } catch (err) {
+                    typingEl.remove();
+                    appendMessage('assistant', `Error confirming: ${err.message}`);
+                }
+
+                pendingConfirmationId = null;
+                isProcessing = false;
+                sendBtn.disabled = true;
+                statusLabel.textContent = 'Asbestos is ready';
+                inputField.focus();
+                return;
+            }
+
+            // Reset any stale confirmation
+            pendingConfirmationId = null;
+
             let userContent;
             if (selectedImageBase64) {
                 userContent = [
@@ -500,6 +539,10 @@
                 const toolTrace = data._tool_trace || [];
                 for (const t of toolTrace) {
                     appendToolIndicator(t.tool, t.args, t.result);
+                    // Track confirmation ID if one was returned
+                    if (t.result?.status === 'confirmation_required' && t.result?.confirmation_id) {
+                        pendingConfirmationId = t.result.confirmation_id;
+                    }
                 }
 
                 conversationHistory.push({ role: 'assistant', content: assistantMsg });
@@ -507,7 +550,7 @@
 
             } catch (err) {
                 typingEl.remove();
-                appendMessage('assistant', `❌ Error: ${err.message}`);
+                appendMessage('assistant', `Error: ${err.message}`);
             }
 
             isProcessing = false;

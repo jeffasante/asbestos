@@ -1,20 +1,4 @@
-2026-03-05T18:47:25Z INF Thank you for trying Cloudflare Tunnel. Doing so, without a Cloudflare account, is a quick way to experiment and try it out. However, be aware that these account-less Tunnels have no uptime guarantee, are subject to the Cloudflare Online Services Terms of Use (https://www.cloudflare.com/website-terms/), and Cloudflare reserves the right to investigate your use of Tunnels for violations of such terms. If you intend to use Tunnels in production you should use a pre-created named tunnel by following: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps
-2026-03-05T18:47:25Z INF Requesting new quick Tunnel on trycloudflare.com...
-2026-03-05T18:47:30Z INF +--------------------------------------------------------------------------------------------+
-2026-03-05T18:47:30Z INF |  Your quick Tunnel has been created! Visit it at (it may take some time to be reachable):  |
-2026-03-05T18:47:30Z INF |  https://made-begins-investors-receiver.trycloudflare.com                                  |
-2026-03-05T18:47:30Z INF +--------------------------------------------------------------------------------------------+
-2026-03-05T18:47:30Z INF Cannot determine default configuration path. No file [config.yml config.yaml] in [~/.cloudflared ~/.cloudflare-warp ~/cloudflare-warp /etc/cloudflared /usr/local/etc/cloudflared]
-2026-03-05T18:47:30Z INF Version 2026.2.0 (Checksum 659e90c91014a0017ec933e4a5c924e5ed1c77e3033bf768c47509c2120e598d)
-2026-03-05T18:47:30Z INF GOOS: darwin, GOVersion: go1.25.7, GoArch: arm64
-2026-03-05T18:47:30Z INF Settings: map[ha-connections:1 protocol:quic url:http://localhost:8765]
-2026-03-05T18:47:30Z INF cloudflared will not automatically update if installed by a package manager.
-2026-03-05T18:47:30Z INF Generated Connector ID: 3d4684b3-0c64-4757-8887-3325def24f53
-2026-03-05T18:47:30Z INF Initial protocol quic
-2026-03-05T18:47:30Z INF ICMP proxy will use 192.168.100.133 as source for IPv4
-2026-03-05T18:47:30Z INF ICMP proxy will use fe80::86:8577:d019:208a in zone en0 as source for IPv6
-2026-03-05T18:47:30Z INF Created ICMP proxy listening on 192.168.100.133:0
-2026-03-05T18:47:30Z INF ICMP proxy will use 192.168.100.133 as source for IPv4
-2026-03-05T18:47:30Z INF ICMP proxy will use fe80::86:8577:d019:208a in zone en0 as source for IPv6
-2026-03-05T18:47:30Z INF Starting metrics server on 127.0.0.1:20241/metrics
-2026-03-05T18:47:30Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveP256] connIndex=0 event=0 ip=198.41.192.27
+2026-03-05T19:05:40Z INF Thank you for trying Cloudflare Tunnel. Doing so, without a Cloudflare account, is a quick way to experiment and try it out. However, be aware that these account-less Tunnels have no uptime guarantee, are subject to the Cloudflare Online Services Terms of Use (https://www.cloudflare.com/website-terms/), and Cloudflare reserves the right to investigate your use of Tunnels for violations of such terms. If you intend to use Tunnels in production you should use a pre-created named tunnel by following: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps
+2026-03-05T19:05:40Z INF Requesting new quick Tunnel on trycloudflare.com...
+2026-03-05T19:05:40Z ERR Error unmarshaling QuickTunnel response: error code: 1015 error="invalid character 'e' looking for beginning of value" status_code="429 Too Many Requests"
+failed to unmarshal quick Tunnel: invalid character 'e' looking for beginning of value
