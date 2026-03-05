@@ -321,9 +321,12 @@ async def run_agent_loop_streaming(
 
             continue
 
-        # Final text response
+        # Final text response — stream word-by-word for typing effect
         content = msg.get("content", "")
-        yield _sse_chunk(content)
+        words = content.split(' ')
+        for i, word in enumerate(words):
+            token = word if i == 0 else ' ' + word
+            yield _sse_chunk(token)
         yield "data: [DONE]\n\n"
         return
 

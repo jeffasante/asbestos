@@ -183,19 +183,105 @@
         .message-content p:last-child { margin-bottom: 0; }
         .message-content code {
             font-family: var(--font-mono);
-            font-size: 14px;
+            font-size: 13px;
             background: var(--bg-secondary);
             padding: 2px 6px;
             border-radius: 6px;
         }
         .message-content pre {
-            background: var(--bg-secondary);
+            background: #1e1e1e;
+            color: #d4d4d4;
             border-radius: 12px;
-            padding: 16px;
+            padding: 0;
             margin: 12px 0;
-            overflow-x: auto;
+            overflow: hidden;
             font-family: var(--font-mono);
             font-size: 13px;
+        }
+        .message-content pre code {
+            display: block;
+            padding: 16px;
+            background: none;
+            color: inherit;
+            overflow-x: auto;
+        }
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 12px;
+            background: #2d2d2d;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 600;
+            color: #858585;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .copy-btn {
+            background: none;
+            border: none;
+            color: #858585;
+            cursor: pointer;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            transition: background 0.2s, color 0.2s;
+        }
+        .copy-btn:hover {
+            background: #3e3e3e;
+            color: #d4d4d4;
+        }
+
+        /* Tables */
+        .message-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 14px;
+        }
+        .message-content th {
+            background: var(--bg-secondary);
+            font-weight: 700;
+            text-align: left;
+            padding: 8px 12px;
+            border-bottom: 2px solid var(--border);
+        }
+        .message-content td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .message-content tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Blockquotes */
+        .message-content blockquote {
+            border-left: 3px solid var(--text-status);
+            margin: 12px 0;
+            padding: 4px 16px;
+            color: var(--text-secondary);
+        }
+
+        /* Ordered lists */
+        .message-content ol {
+            padding-left: 20px;
+            margin: 8px 0;
+        }
+        .message-content ul {
+            padding-left: 20px;
+            margin: 8px 0;
+        }
+        .message-content li {
+            margin-bottom: 4px;
+        }
+
+        /* HR */
+        .message-content hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 16px 0;
         }
 
         .tool-indicator {
@@ -785,22 +871,112 @@
             });
         }
 
-        function renderMarkdown(text) {
-            if (!text) return '';
-            let html = escapeHtml(text);
-            html = html.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
-            html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-            html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-            html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
-            html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
-            html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
-            html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
-            html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
-            html = html.replace(/(<li>.*<\/li>\n?)+/gs, '<ul>$&</ul>');
-            html = html.replace(/\n/g, '<br>');
-            html = html.replace(/(<\/pre>)<br>/g, '$1');
-            return html;
-        }
+function copyCode(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    navigator.clipboard.writeText(el.textContent).then(() => {
+      const btn = el.closest("pre").querySelector(".copy-btn");
+      if (btn) {
+        btn.textContent = "Copied!";
+        setTimeout(() => {
+          btn.textContent = "Copy";
+        }, 1500);
+      }
+    });
+  }
+}
+
+function renderMarkdown(text) {
+  if (!text) return "";
+  let html = escapeHtml(text);
+
+  // Code blocks with language labels and copy buttons
+  let codeId = 0;
+  html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (match, lang, code) => {
+    const id = `code-${Date.now()}-${codeId++}`;
+    const label = lang || "text";
+    return `<pre><div class="code-header"><span>${label}</span><button class="copy-btn" onclick="copyCode('${id}')">Copy</button></div><code id="${id}">${code.trim()}</code></pre>`;
+  });
+
+  // Inline code
+  html = html.replace(/`([^`]+)`/g, "<code>$1</code>");
+
+  // Tables
+  html = html.replace(
+    /^\|(.+)\|\s*\n\|[\s:|-]+\|\s*\n((?:\|.+\|\s*\n?)*)/gm,
+    (match, headerRow, bodyRows) => {
+      const headers = headerRow
+        .split("|")
+        .map((h) => h.trim())
+        .filter(Boolean);
+      let table = "<table><thead><tr>";
+      headers.forEach((h) => {
+        table += `<th>${h}</th>`;
+      });
+      table += "</tr></thead><tbody>";
+      bodyRows
+        .trim()
+        .split("\n")
+        .forEach((row) => {
+          const cells = row
+            .split("|")
+            .map((c) => c.trim())
+            .filter(Boolean);
+          if (cells.length) {
+            table += "<tr>";
+            cells.forEach((c) => {
+              table += `<td>${c}</td>`;
+            });
+            table += "</tr>";
+          }
+        });
+      table += "</tbody></table>";
+      return table;
+    },
+  );
+
+  // Blockquotes
+  html = html.replace(/^&gt; (.+)$/gm, "<blockquote>$1</blockquote>");
+
+  // Bold and italic
+  html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  html = html.replace(/\*(.+?)\*/g, "<em>$1</em>");
+
+  // Headings
+  html = html.replace(/^### (.+)$/gm, "<h3>$1</h3>");
+  html = html.replace(/^## (.+)$/gm, "<h2>$1</h2>");
+  html = html.replace(/^# (.+)$/gm, "<h1>$1</h1>");
+
+  // Horizontal rules
+  html = html.replace(/^---$/gm, "<hr>");
+
+  // Ordered lists
+  html = html.replace(/^\d+\. (.+)$/gm, '<li class="ol-item">$1</li>');
+  html = html.replace(
+    /((?:<li class="ol-item">.*<\/li>\n?)+)/gs,
+    "<ol>$1</ol>",
+  );
+
+  // Unordered lists
+  html = html.replace(/^- (.+)$/gm, "<li>$1</li>");
+  html = html.replace(/((?:<li>(?!class).*<\/li>\n?)+)/gs, "<ul>$1</ul>");
+
+  // Line breaks (but not after block elements)
+  html = html.replace(/\n/g, "<br>");
+  html = html.replace(/(<\/pre>)<br>/g, "$1");
+  html = html.replace(/(<\/table>)<br>/g, "$1");
+  html = html.replace(/(<\/h[123]>)<br>/g, "$1");
+  html = html.replace(/(<\/ul>)<br>/g, "$1");
+  html = html.replace(/(<\/ol>)<br>/g, "$1");
+  html = html.replace(/(<\/blockquote>)<br>/g, "$1");
+  html = html.replace(/<br>(<pre>)/g, "$1");
+  html = html.replace(/<br>(<table>)/g, "$1");
+  html = html.replace(/<br>(<h[123]>)/g, "$1");
+  html = html.replace(/<br>(<ul>)/g, "$1");
+  html = html.replace(/<br>(<ol>)/g, "$1");
+  html = html.replace(/<br>(<hr>)/g, "$1");
+  return html;
+}
 
         function escapeHtml(str) {
             const div = document.createElement('div');
