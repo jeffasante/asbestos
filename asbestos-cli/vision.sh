@@ -1,58 +1,71 @@
 #!/bin/bash
 
 # Asbestos Vision-CLI Bridge
-# A helper script to run Multimodal Vision analysis using llama-cli
+# Connects to the running Asbestos Agent server to perform vision analysis
 
-# Configuration - update these paths as needed or link models to this folder
-MODEL_NAME="Qwen_Qwen3.5-0.8B-Q8_0.gguf"
-MMPROJ_NAME="mmproj-Qwen_Qwen3.5-0.8B-bf16.gguf"
-CLI_BIN="../llama.cpp/bin/llama-cli"
-
-# Look for models in the current dir, parent, or a 'models' folder
-if [ -f "$MODEL_NAME" ]; then
-    MODEL_PATH="$MODEL_NAME"
-elif [ -f "../$MODEL_NAME" ]; then
-    MODEL_PATH="../$MODEL_NAME"
-elif [ -f "../models/$MODEL_NAME" ]; then
-    MODEL_PATH="../models/$MODEL_NAME"
-else
-    echo "Error: Base model $MODEL_NAME not found."
-    exit 1
-fi
-
-if [ -f "$MMPROJ_NAME" ]; then
-    MMPROJ_PATH="$MMPROJ_NAME"
-elif [ -f "../$MMPROJ_NAME" ]; then
-    MMPROJ_PATH="../$MMPROJ_NAME"
-elif [ -f "../models/$MMPROJ_NAME" ]; then
-    MMPROJ_PATH="../models/$MMPROJ_NAME"
-else
-    echo "Error: Vision Projector $MMPROJ_NAME not found."
-    exit 1
-fi
-
-if [ ! -f "$CLI_BIN" ]; then
-    echo "Error: llama-cli binary not found at $CLI_BIN"
-    exit 1
-fi
+AGENT_URL="http://127.0.0.1:8765/v1/chat/completions"
 
 # Usage check
 if [ -z "$1" ]; then
     echo "Usage: ./vision.sh <path_to_image> [prompt]"
-    echo "Example: ./vision.sh sample_vision.png 'Analyze this image.'"
+    echo "Example: ./vision.sh sample.jpg 'What is this image of?'"
     exit 1
 fi
 
 IMAGE_PATH="$1"
 PROMPT="${2:-"Describe this image in detail."}"
 
-echo "--- Asbestos Vision Analysis ---"
-echo "Model: $MODEL_PATH"
-echo "Image: $IMAGE_PATH"
-echo "--------------------------------"
+if [ ! -f "$IMAGE_PATH" ]; then
+    echo "Error: Image file not found at $IMAGE_PATH"
+    exit 1
+fi
 
-$CLI_BIN -m "$MODEL_PATH" \
-         --mmproj "$MMPROJ_PATH" \
-         --image "$IMAGE_PATH" \
-         -p "$PROMPT" \
-         -n 128
+echo "--- Asbestos Vision Analysis (Server Mode) ---"
+echo "Image: $IMAGE_PATH"
+echo "Prompt: $PROMPT"
+echo "----------------------------------------------"
+
+# Resize image down to max 1024px to prevent large model OOM/400 errors
+TMP_IMG="/tmp/asbestos_vision_tmp.jpg"
+sips -Z 1024 -s format jpeg "$IMAGE_PATH" --out "$TMP_IMG" >/dev/null 2>&1
+
+MIMETYPE="image/jpeg"
+BASE64_DATA=$(base64 -i "$TMP_IMG")
+
+# Create JSON payload using jq to safely escape the prompt string
+JSON_PAYLOAD=$(jq -n \
+  --arg p "$PROMPT" \
+  --arg b "data:$MIMETYPE;base64,$BASE64_DATA" \
+'{
+  "model": "asbestos-local",
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        { "type": "text", "text": $p },
+        { "type": "image_url", "image_url": { "url": $b } }
+      ]
+    }
+  ]
+}')
+
+# Send to running server
+curl -s -X POST $AGENT_URL \
+     -H "Content-Type: application/json" \
+     -d "$JSON_PAYLOAD" | python3 -c '
+import sys, json
+
+try:
+    resp = json.load(sys.stdin)
+    if "choices" in resp and len(resp["choices"]) > 0:
+        print("\nAgent Response:")
+        print(resp["choices"][0]["message"]["content"])
+    else:
+        print("\nError from server:")
+        print(json.dumps(resp, indent=2))
+except Exception as e:
+    print("\nFailed to parse JSON response.")
+'
+
+# Cleanup
+rm -f "$TMP_IMG"
