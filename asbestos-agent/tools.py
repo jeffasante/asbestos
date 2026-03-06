@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 import os
 import subprocess
 from pathlib import Path
@@ -132,6 +133,13 @@ async def file_rw(
         except Exception as e:
             return {"status": "error", "message": f"Could not read {resolved}: {e}"}
 
+    # Write — reject if target is an existing directory
+    if resolved.is_dir():
+        return {
+            "status": "error",
+            "message": f"Cannot write to '{resolved}': it is a directory, not a file. To list its contents, call file_rw without 'content', or use shell_exec with 'ls -la {resolved}'.",
+        }
+
     # Write — needs confirmation
     if not AUTONOMOUS:
         conf_id = request_id or os.urandom(8).hex()
@@ -175,30 +183,48 @@ async def os_action(
       - "open"   : open a URL or file with the default handler
       - "notify" : send a macOS notification
     """
+    logger = logging.getLogger("asbestos.tools")
+
     if action_type == "open":
         try:
+            logger.info("os_action open: %s", payload)
             proc = await asyncio.create_subprocess_exec(
                 "open", payload,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
             )
-            await proc.communicate()
+            stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=10)
+            if proc.returncode != 0:
+                err = stderr.decode(errors="replace").strip()
+                logger.error("os_action open failed (rc=%d): %s", proc.returncode, err)
+                return {"status": "error", "message": f"open failed: {err}"}
             return {"status": "ok", "action": "open", "target": payload}
+        except asyncio.TimeoutError:
+            return {"status": "error", "message": "open command timed out."}
         except Exception as e:
             return {"status": "error", "message": str(e)}
 
     elif action_type == "notify":
+        # Sanitize payload to prevent AppleScript injection
+        safe_payload = payload.replace('"', '\\"').replace("'", "\\'")
         script = (
-            f'display notification "{payload}" with title "Asbestos Agent"'
+            f'display notification "{safe_payload}" with title "Asbestos Agent"'
         )
         try:
+            logger.info("os_action notify: %s", payload)
             proc = await asyncio.create_subprocess_exec(
                 "osascript", "-e", script,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
             )
-            await proc.communicate()
+            stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=10)
+            if proc.returncode != 0:
+                err = stderr.decode(errors="replace").strip()
+                logger.error("os_action notify failed (rc=%d): %s", proc.returncode, err)
+                return {"status": "error", "message": f"Notification failed: {err}"}
             return {"status": "ok", "action": "notify", "message": payload}
+        except asyncio.TimeoutError:
+            return {"status": "error", "message": "Notification command timed out."}
         except Exception as e:
             return {"status": "error", "message": str(e)}
 
@@ -213,8 +239,10 @@ TOOL_DEFINITIONS = [
             "name": "shell_exec",
             "description": (
                 "Execute a shell command on the local machine and return "
-                "stdout, stderr, and exit code. Use for system info, "
-                "file listings, git operations, running scripts, etc. "
+                "stdout, stderr, and exit code. "
+                "Examples: 'ls -la ~/Desktop' (list desktop files), "
+                "'uptime' (system uptime), 'df -h /' (disk space), "
+                "'date' (current time), 'ps aux | head -20' (processes). "
                 "Do NOT use this to write or save files — use file_rw instead."
             ),
             "parameters": {
