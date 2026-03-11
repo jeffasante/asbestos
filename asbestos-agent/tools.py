@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any
 
 from config import SAFE_COMMAND_PREFIXES, AUTONOMOUS
+from insight import analyze_file, get_project_context
 
 # ── Pending confirmations store
 # Maps request_id → { "tool": ..., "args": ..., "description": ... }
@@ -231,6 +232,37 @@ async def os_action(
     return {"status": "error", "message": f"Unknown action type: {action_type}"}
 
 
+# ── Tool: project_insight
+async def project_insight(
+    file_path: str,
+    request_id: str | None = None,
+) -> dict[str, Any]:
+    """
+    Generate pseudocode and architectural explanation for a source file.
+    Returns structured insight with intent, pseudocode, and context.
+    """
+    logger = logging.getLogger("asbestos.tools")
+    logger.info("project_insight: analyzing %s", file_path)
+    
+    # Get project context from the file's parent directory
+    from pathlib import Path as _Path
+    parent = _Path(file_path).resolve().parent
+    context = get_project_context(parent)
+    
+    result = await analyze_file(file_path, project_context=context)
+    
+    if result["status"] == "ok":
+        return {
+            "status": "ok",
+            "file": result["name"],
+            "insight": result["insight"],
+        }
+    return {
+        "status": "error",
+        "message": result.get("error", "Unknown error analyzing file"),
+    }
+
+
 # ── Tool registry (OpenAI function-calling format) 
 TOOL_DEFINITIONS = [
     {
@@ -308,6 +340,28 @@ TOOL_DEFINITIONS = [
             },
         },
     },
+    {
+        "type": "function",
+        "function": {
+            "name": "project_insight",
+            "description": (
+                "Analyze a source code file and generate pseudocode, "
+                "architectural explanation, and contextual memory. "
+                "Use this when the user asks to 'explain', 'understand', "
+                "'analyze', or 'document' a file or code."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "file_path": {
+                        "type": "string",
+                        "description": "Absolute path to the source file to analyze.",
+                    },
+                },
+                "required": ["file_path"],
+            },
+        },
+    },
 ]
 
 
@@ -316,6 +370,7 @@ TOOL_MAP = {
     "shell_exec": shell_exec,
     "file_rw": file_rw,
     "os_action": os_action,
+    "project_insight": project_insight,
 }
 
 

@@ -1,4 +1,4 @@
-# 🧶 Asbestos
+# Asbestos
 
 Asbestos is a high-performance cross-platform research project demonstrating the integration of the llama.cpp C++ inference engine into native mobile and desktop environments, as well as a fully autonomous local agent accessible via the web. This project showcases the ability to run Large Language Models (LLMs) and Multimodal Vision models locally on consumer-grade hardware (CPU) with minimal latency and high privacy, while securely exposing these capabilities remotely using direct port forwarding.
 
@@ -55,6 +55,8 @@ Includes a fully-featured local AI assistant capable of tool execution (shell co
 - **Approach**: A Python/FastAPI server wraps the local `llama-server` process to expose a standard OpenAI-compatible API (`/v1/chat/completions`). Public HTTPS tunnels forward this local port to the internet natively without a central broker.
 - **Multimodal Support**: Fully integrated **VLM (Vision Engine)** within the agent loop, allowing the agent to "see" and reason about attached images in the chat UI.
 - **Capabilities**: Proactive tool execution with smart error recovery (e.g., automatic `mkdir -p` for missing directories during file-write operations).
+- **Project Insight**: Dedicated codebase comprehension mode providing interactive flowcharts (Mermaid.js), side-by-side code previews, and active recall quizzes with interactive grading. This feature was added to combat "knowledge atrophy" by helping developers maintain a deep mental model of their code rather than just delegating logic to AI. You can test this by scanning the **asbestos/test** directory within the Insight UI or using the CLI.
+- **Explain CLI**: A terminal-based insight tool (`asbestos-cli/explain.sh`) that provides structured logic analysis and interactive comprehension checks directly in your shell.
 - **Safety**: Robust **human-in-the-loop** intercept mechanism. The agent pauses its execution loop and requests user approval via a persistent confirmation ID system for any destructive commands or file writes.
 - **Accessibility**: Securely control your local computer from anywhere (e.g., a smartphone) via a self-hosted, responsive Web Chat UI.
 

@@ -1,4 +1,4 @@
-# 🧶 Asbestos Agent
+# asbestos-agent
 
 A local AI agent with tool execution, accessible from anywhere via tunneled HTTPS.
 
@@ -72,7 +72,30 @@ The `file_rw` tool is designed for autonomous resilience:
 
 - **Auto-mkdir**: Missing parent directories are created automatically (`mkdir -p`) during write operations.
 - **Smart Feedback**: If you try to read a non-existent file, the agent receives a hint to "create it first," preventing loops.
-- **Directory Listing**: If `file_rw` is called on a directory, it returns a listing of the contents instead of an error.
+- **Directory Listing**: If `file_rw` call on a directory, it returns a listing of the contents instead of an error.
+
+### Project Insight
+
+Project Insight is a specialized mode designed for deep codebase comprehension. It allows you to scan local directories to generate interactive documentation and mental models of your code without making any modifications.
+
+#### Rationale
+As AI tools become more integrated into the development workflow, there is a growing risk of knowledge atrophy—where developers delegate too much logic to the AI and lose their internal mental model of the system. Project Insight was added to reverse this trend. Instead of writing code for you, it translates your existing code into visual and conceptual structures, using active recall (quizzes) and logic mapping (flowcharts) to ensure you remain the ultimate owner of your codebase's complexity.
+
+- **Active Learning Quizzes**: Comprehension checks that use active recall with **interactive grading** by an AI tutor to ensure you truly understand the logic.
+- **Insight CLI**: Access all analysis features directly from your terminal using `asbestos-cli/explain.sh`. Supports interactive quizzes, logic recaps, and Mermaid flowcharts.
+- **Side-by-Side Preview**: A dual-panel interface that lets you view source code alongside AI-generated insights for immediate context.
+- **Session History**: Persistent access to recently scanned project paths for seamless switching between repositories.
+
+Access the Project Insight interface at **http://localhost:8765/insight**.
+
+### Testing Project Insight
+
+To verify the features with sample code, you can scan the test directory included in this repository.
+
+1. Open the Project Insight UI in your browser.
+2. Enter the absolute path to the **asbestos/test** directory in the scan input.
+3. Select a sample file like **math_logic.py** to view its logic flow and generated summaries.
+4. Toggle the **CODE** panel to see the side-by-side preview mode in action.
 
 ### Endpoints
 
@@ -81,6 +104,7 @@ The `file_rw` tool is designed for autonomous resilience:
 | `POST` | `/v1/chat/completions` | Chat completions (streaming & non-streaming) |
 | `GET`  | `/v1/models`           | List available models                        |
 | `GET`  | `/chat`                | Built-in chat web UI                         |
+| `GET`  | `/insight`             | Project Insight codebase analysis UI         |
 | `GET`  | `/health`              | Server health check                          |
 | `GET`  | `/pending`             | List pending confirmations                   |
 | `POST` | `/confirm/{id}`        | Approve a destructive action                 |
@@ -113,9 +137,9 @@ To disable safety (use at your own risk):
 
 | Option                  | Account Needed     | Install                    |
 | ----------------------- | ------------------ | -------------------------- |
-| **Cloudflare Tunnel**   | ❌ No              | `brew install cloudflared` |
+| **Cloudflare Tunnel**   | No                 | `brew install cloudflared` |
 | **VS Code Dev Tunnels** | GitHub account     | Built into VS Code         |
-| **ngrok**               | ✅ Yes (free tier) | `brew install ngrok`       |
+| **ngrok**               | Yes (free tier)    | `brew install ngrok`       |
 
 ## Configuration
 

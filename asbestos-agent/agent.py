@@ -57,6 +57,8 @@ _STRONG_TOOL_KEYWORDS = {
     # commands / actions
     "execute", "install", "brew", "pip", "npm", "git", "command",
     "terminal", "shell", "script", "scan", "monitor", "kill",
+    # insight / comprehension
+    "insight", "explain", "pseudocode", "analyze", "understand", "document",
     # app-level
     "notification", "notify", "alert", "screenshot", "clipboard",
     "volume", "brightness", "battery",

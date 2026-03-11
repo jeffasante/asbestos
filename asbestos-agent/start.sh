@@ -77,10 +77,12 @@ if [ ! -d ".venv" ]; then
 fi
 
 source .venv/bin/activate
+./.venv/bin/python3 -m pip install --upgrade pip -q
 
 # Install deps
 echo -e "${YELLOW}Installing dependencies...${NC}"
-pip install -q -r requirements.txt
+./.venv/bin/python3 -m pip install -r requirements.txt -q
+echo -e "${GREEN}✓ Python dependencies installed${NC}"
 
 # ── Tunnel setup ──────────────────────────────────────────────────
 TUNNEL_PID=""
@@ -206,4 +208,4 @@ else
     start_tunnel
 fi
 
-AUTONOMOUS=$AUTONOMOUS AGENT_PORT=$AGENT_PORT python3 server.py
+AUTONOMOUS=$AUTONOMOUS AGENT_PORT=$AGENT_PORT ./.venv/bin/python3 server.py

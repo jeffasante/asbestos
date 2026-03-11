@@ -44,6 +44,17 @@ from config import (
 )
 from agent import run_agent_loop, run_agent_loop_streaming
 from tools import get_pending, pop_pending, execute_tool
+from insight import (
+    scan_directory,
+    build_project_tree,
+    analyze_file,
+    generate_quiz,
+    generate_diff_summary,
+    generate_flowchart,
+    get_project_context,
+    get_raw_code,
+    grade_quiz,
+)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -125,7 +136,7 @@ async def _wait_for_llama(timeout: float = 60):
     raise RuntimeError("llama-server failed to start within timeout")
 
 
-# ── FastAPI app ───────────────────────────────────────────────────────
+# ── FastAPI app 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -162,7 +173,7 @@ app.add_middleware(
 )
 
 
-# ── Models ────────────────────────────────────────────────────────────
+# ── Models ─────
 
 class ChatMessage(BaseModel):
     role: str
@@ -180,7 +191,7 @@ class ChatRequest(BaseModel):
     tools: list[Any] | None = None  # ignored — we use our own
 
 
-# ── Routes ────────────────────────────────────────────────────────────
+# ── Routes ─────
 
 @app.get("/chat")
 async def chat_ui():
@@ -189,6 +200,95 @@ async def chat_ui():
     if not chat_file.exists():
         raise HTTPException(404, "Chat UI not found")
     return FileResponse(str(chat_file), media_type="text/html")
+
+
+@app.get("/insight")
+async def insight_ui():
+    """Serve the Project Insight interface."""
+    insight_file = Path(__file__).parent / "static" / "insight.html"
+    if not insight_file.exists():
+        raise HTTPException(404, "Insight UI not found")
+    return FileResponse(str(insight_file), media_type="text/html")
+
+
+# ── Project Insight API ───────────────────────────────────────────────
+
+class InsightScanRequest(BaseModel):
+    directory: str = str(Path.home())
+    max_files: int = 200
+
+
+class InsightFileRequest(BaseModel):
+    file_path: str
+    include_context: bool = True
+
+
+class InsightGradeRequest(BaseModel):
+    file_path: str
+    user_answers: list[str]
+    ground_truth: str
+
+
+@app.post("/insight/scan")
+async def insight_scan(req: InsightScanRequest):
+    """Scan a directory and return a project file tree."""
+    files = scan_directory(req.directory, max_files=req.max_files)
+    tree = build_project_tree(files, req.directory)
+    return {
+        "status": "ok",
+        "root": str(Path(req.directory).resolve()),
+        "file_count": len(files),
+        "files": files,
+        "tree": tree,
+    }
+
+
+@app.post("/insight/analyze")
+async def insight_analyze(req: InsightFileRequest):
+    """Generate pseudocode + architectural insight for a single file."""
+    context = ""
+    if req.include_context:
+        # Derive project root from file path (go up until we find common markers)
+        parent = Path(req.file_path).resolve().parent
+        context = get_project_context(parent)
+    
+    result = await analyze_file(req.file_path, project_context=context)
+    return result
+
+
+@app.post("/insight/quiz")
+async def insight_quiz(req: InsightFileRequest):
+    """Generate comprehension quiz questions for a file (anti-atrophy)."""
+    result = await generate_quiz(req.file_path)
+    return result
+
+
+@app.post("/insight/summary")
+async def insight_summary(req: InsightFileRequest):
+    """Generate a 'Previously on this file...' contextual memory summary."""
+    result = await generate_diff_summary(req.file_path)
+    return result
+
+
+@app.post("/insight/flowchart")
+async def insight_flowchart(req: InsightFileRequest):
+    """Generate a Mermaid.js flowchart for a file's main logic."""
+    result = await generate_flowchart(req.file_path)
+    return result
+
+
+@app.post("/insight/grade")
+async def insight_grade(req: InsightGradeRequest):
+    """Grade user answers using a tutor-persona LLM call."""
+    result = await grade_quiz(req.file_path, req.user_answers, req.ground_truth)
+    return result
+
+
+@app.post("/insight/raw")
+async def insight_raw(req: InsightFileRequest):
+    """Return raw source code for a file."""
+    result = get_raw_code(req.file_path)
+    return result
 
 
 @app.get("/health")
@@ -267,7 +367,7 @@ async def confirm_action(confirmation_id: str):
     return JSONResponse(json.loads(result_str))
 
 
-# ── Entry point ───────────────────────────────────────────────────────
+# ── Entry point 
 
 if __name__ == "__main__":
     import uvicorn

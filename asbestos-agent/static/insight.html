@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Asbestos · Project Insight</title>
+    <meta name="description" content="AI-powered pseudocode and architectural analysis — understand your code, don't just consume it.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f2f2f2;
+            --bg-action: #e0e0e0;
+            --text-primary: #000000;
+            --text-secondary: #666666;
+            --text-status: #8e8e93;
+            --accent: #000000;
+            --border: #f2f2f2;
+            --font-sans: 'Quicksand', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+            --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+            --radius-card: 24px;
+            --radius-btn: 50%;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: var(--font-sans);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            overflow: hidden;
+        }
+
+        body { display: flex; flex-direction: column; }
+
+        /* ── Header ──────────────────────────────────── */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            background: var(--bg-primary);
+            z-index: 100;
+        }
+
+        .header-title {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--text-status);
+            font-family: var(--font-sans);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 12px;
+            transition: background 0.2s, color 0.2s;
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .nav-btn.active {
+            color: var(--text-primary);
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #34c759;
+        }
+
+        /* ── Main Layout ─────────────────────────────── */
+        .main {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* ── Sidebar ─────────────────────────────────── */
+        .sidebar {
+            width: 300px;
+            min-width: 260px;
+            background: var(--bg-primary);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 16px 16px 12px;
+        }
+
+        .scan-input-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .scan-input {
+            flex: 1;
+            background: var(--bg-secondary);
+            border: none;
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 500;
+            padding: 10px 14px;
+            border-radius: 14px;
+            outline: none;
+        }
+
+        .scan-input::placeholder { color: var(--text-status); }
+
+        .scan-btn {
+            background: var(--text-primary);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 14px;
+            font-family: var(--font-sans);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+        }
+
+        .scan-btn:hover { opacity: 0.8; }
+        .scan-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .sidebar-stats {
+            padding: 8px 16px 10px;
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-status);
+        }
+
+        .recent-paths {
+            max-height: 120px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+            margin-bottom: 4px;
+            display: none;
+            overflow-y: auto;
+        }
+        .recent-paths.visible { display: block; }
+        
+        .recent-header {
+            padding: 8px 16px 4px;
+            font-size: 8px;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-status);
+            opacity: 0.6;
+        }
+
+        .recent-item {
+            padding: 6px 16px;
+            font-size: 10.5px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .recent-item:hover { color: var(--text-primary); background: var(--bg-secondary); }
+
+        .file-tree {
+            flex: 1;
+            overflow-y: auto;
+            padding: 4px 0;
+        }
+
+        .tree-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 16px;
+            cursor: pointer;
+            transition: background 0.15s;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .tree-item:hover { background: var(--bg-secondary); color: var(--text-primary); }
+        .tree-item.active { background: var(--bg-secondary); color: var(--text-primary); font-weight: 700; }
+
+        .tree-icon { font-size: 13px; width: 18px; text-align: center; flex-shrink: 0; }
+        .tree-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .tree-size { font-size: 10px; font-family: var(--font-mono); color: var(--text-status); }
+
+        .tree-dir {
+            padding: 10px 16px 4px;
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-status);
+        }
+
+        /* ── Content Panel ───────────────────────────── */
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .content-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border);
+            gap: 12px;
+        }
+
+        .toolbar-filename {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .toolbar-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .mode-btn {
+            background: none;
+            border: none;
+            padding: 5px 12px;
+            font-family: var(--font-sans);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--text-status);
+            cursor: pointer;
+            border-radius: 12px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .mode-btn:hover { background: var(--bg-secondary); color: var(--text-primary); }
+        .mode-btn.active { background: var(--bg-secondary); color: var(--text-primary); }
+
+        .submit-btn {
+            background: var(--text-primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-family: var(--font-sans);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .submit-btn:hover { transform: translateY(-1px); }
+        .submit-btn:active { transform: translateY(0); }
+        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .feedback-card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 32px;
+        }
+
+        .content-body {
+            flex: 1;
+            padding: 0;
+            overflow-y: auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Welcome State ───────────────────────────── */
+        .welcome-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .welcome-state h1 {
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .welcome-subtitle {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-status);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+
+        /* ── Loading ─────────────────────────────────── */
+        .loading-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            gap: 16px;
+            padding: 40px;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 8px 0;
+        }
+
+        .typing-indicator span {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--text-primary);
+            animation: blink 1.2s infinite both;
+            opacity: 0.2;
+        }
+
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+
+        .loading-text {
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-status);
+        }
+
+        /* ── Code Panel ────────────────────────────────── */
+        .content-area {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .code-panel {
+            width: 0;
+            background: #0d0d0d;
+            border-left: 1px solid var(--border); /* Changed from var(--border-color) to var(--border) */
+            overflow-y: auto;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .code-panel.visible {
+            width: 450px;
+        }
+
+        .code-panel pre {
+            margin: 0;
+            padding: 24px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #d1d1d1;
+            white-space: pre-wrap;
+        }
+
+        .code-panel-header {
+            position: sticky;
+            top: 0;
+            background: #050505;
+            padding: 8px 16px;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-status);
+            border-bottom: 1px solid var(--border); /* Changed from var(--border-color) to var(--border) */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* ── Quiz Inputs ───────────────────────────────── */
+        .quiz-question-container {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+            border: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .quiz-question-container:focus-within {
+            border-color: var(--text-status); /* Changed from var(--accent-status) to var(--text-status) */
+        }
+
+        .quiz-input {
+            width: 100%;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            padding: 12px;
+            margin-top: 12px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            resize: vertical;
+            min-height: 80px;
+            line-height: 1.5;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .quiz-input:focus { 
+            border-color: var(--text-status);
+            box-shadow: 0 0 0 2px rgba(142, 142, 147, 0.1);
+        }
+
+        .quiz-input::placeholder { color: var(--text-status); }
+
+        /* ── Insight Content (matches chat message styling) ── */
+        .insight-content {
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 16px;
+            line-height: 1.6;
+            font-weight: 500;
+            padding: 24px 40px;
+            width: 100%;
+        }
+
+        .insight-content h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 24px 0 12px;
+        }
+
+        .insight-content h2 {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 24px 0 10px;
+        }
+
+        .insight-content h3 {
+            font-size: 15px;
+            font-weight: 700;
+            margin: 18px 0 8px;
+            color: var(--text-secondary);
+        }
+
+        .insight-content p { margin-bottom: 12px; }
+        .insight-content p:last-child { margin-bottom: 0; }
+
+        .insight-content strong { font-weight: 700; }
+
+        .insight-content code {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+
+        .insight-content pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 12px;
+            padding: 0;
+            margin: 12px 0;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 13px;
+        }
+
+        .insight-content pre code {
+            display: block;
+            padding: 16px;
+            background: none;
+            color: inherit;
+            white-space: pre;
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 12px;
+            background: #2d2d2d;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 600;
+            color: #858585;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .insight-content ul, .insight-content ol {
+            padding-left: 20px;
+            margin: 8px 0;
+        }
+
+        .insight-content li { margin-bottom: 4px; }
+
+        .insight-content hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 16px 0;
+        }
+
+        .insight-content blockquote {
+            border-left: 3px solid var(--text-status);
+            margin: 12px 0;
+            padding: 4px 16px;
+            color: var(--text-secondary);
+        }
+
+        .insight-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 14px;
+        }
+
+        .insight-content th {
+            background: var(--bg-secondary);
+            font-weight: 700;
+            text-align: left;
+            padding: 8px 12px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .insight-content td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .insight-content tr:last-child td { border-bottom: none; }
+
+        /* ── Quiz ─────────────────────────────────────── */
+        .quiz-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 24px 40px 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .quiz-header-icon { font-size: 24px; }
+
+        .quiz-header-text h2 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .quiz-header-text p {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-status);
+            margin: 2px 0 0;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .quiz-answers-toggle {
+            margin-top: 20px;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .quiz-answers-btn {
+            width: 100%;
+            background: none;
+            border: none;
+            padding: 12px 18px;
+            font-family: var(--font-sans);
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .quiz-answers-btn:hover { background: var(--bg-action); }
+
+        .quiz-answers-content {
+            display: none;
+            padding: 0 18px 18px;
+        }
+
+        .quiz-answers-content.visible { display: block; }
+
+        /* ── Flowchart ────────────────────────────────────── */
+        .flowchart-container {
+            width: 100% !important;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            margin: 0 !important;
+            max-width: none !important;
+        }
+
+        .flowchart-container .mermaid {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 0;
+            margin: 16px 0;
+            width: 100% !important;
+            height: 600px;
+            position: relative;
+            overflow: hidden;
+            cursor: grab;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mermaid-error-msg {
+            padding: 20px;
+            color: var(--text-status);
+            font-size: 13px;
+            font-family: var(--font-mono);
+            max-width: 80%;
+            text-align: center;
+            opacity: 0.7;
+        }
+
+        .flowchart-container .mermaid:active { cursor: grabbing; }
+
+        .flowchart-container .mermaid svg {
+            /* Remove !important to allow svg-pan-zoom to control transformations */
+            display: block;
+        }
+
+        .flowchart-label {
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-status);
+            margin-bottom: 8px;
+        }
+
+        /* ── Scrollbar ────────────────────────────────── */
+        ::-webkit-scrollbar { width: 0px; }
+
+        /* ── Mobile ───────────────────────────────────── */
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .sidebar.mobile-open {
+                display: flex;
+                position: fixed;
+                top: 0; left: 0; right: 0; bottom: 0;
+                width: 100%;
+                z-index: 200;
+            }
+            .content-body { padding: 16px; }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: false, theme: 'dark', securityLevel: 'loose' });</script>
+</head>
+<body>
+
+    <header class="header">
+        <span class="header-title">Asbestos</span>
+        <div class="header-actions">
+            <a href="/chat" class="nav-btn">Chat</a>
+            <a href="/insight" class="nav-btn active">Insight</a>
+            <div class="status-pill">
+                <span class="status-dot"></span>
+                <span>Connected</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="main">
+        <!-- Sidebar: File Tree -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="scan-input-group">
+                    <input
+                        type="text"
+                        id="scanPath"
+                        class="scan-input"
+                        placeholder="/path/to/project"
+                    >
+                    <button class="scan-btn" id="scanBtn" onclick="scanProject()">Scan</button>
+                </div>
+            </div>
+            <div class="sidebar-stats" id="sidebarStats">No project scanned</div>
+            <div class="recent-paths" id="recentPaths">
+                <div class="recent-header">Recent Scans</div>
+                <div id="recentList"></div>
+            </div>
+            <div class="file-tree" id="fileTree"></div>
+        </aside>
+
+        <!-- Content Panel -->
+        <div class="content">
+            <div class="content-toolbar" id="toolbar" style="display: none;">
+                <span class="toolbar-filename" id="toolbarFilename">No file selected</span>
+                <div class="toolbar-actions">
+                    <button class="mode-btn active" id="modeInsight" onclick="setMode('insight')">Insight</button>
+                    <button class="mode-btn" id="modeFlow" onclick="loadFlowchart()">Flow</button>
+                    <button class="mode-btn" id="modeQuiz" onclick="loadQuiz()">Quiz</button>
+                    <button class="mode-btn" id="modeRecap" onclick="loadSummary()">Recap</button>
+                </div>
+                <button class="mode-btn" id="toggleCode" onclick="toggleCodePanel()" style="margin-left:auto; border-color:var(--text-status); color:var(--text-status);">CODE</button>
+            </div>
+
+            <div class="content-area">
+                <div class="content-body" id="contentBody">
+                    <div class="welcome-state" id="welcomeState">
+                        <h1>PROJECT<br>INSIGHT</h1>
+                        <span class="welcome-subtitle">Understand your code. Don't just consume it.</span>
+                    </div>
+                </div>
+                <div class="code-panel" id="codePanel">
+                    <div class="code-panel-header">
+                        <span>Source Preview</span>
+                        <button onclick="toggleCodePanel()" style="background:none; border:none; color:inherit; cursor:pointer;">✕</button>
+                    </div>
+                    <pre id="codeContent"><code></code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ── State ────────────────────────────────────────
+        let projectFiles = [];
+        let projectRoot = '';
+        let currentFile = null;
+        let summaryCache = {};
+        let flowchartCache = {};
+        let quizCache = {};
+        let codeCache = {};
+        let currentQuizData = null; // Stores questions + ground truth for grading
+        let recentPaths = JSON.parse(localStorage.getItem('asbestos_recent_paths') || '[]');
+
+        const scanPathInput = document.getElementById('scanPath');
+        const scanBtn = document.getElementById('scanBtn');
+        const sidebarStats = document.getElementById('sidebarStats');
+        const fileTree = document.getElementById('fileTree');
+        const toolbar = document.getElementById('toolbar');
+        const toolbarFilename = document.getElementById('toolbarFilename');
+        const contentBody = document.getElementById('contentBody');
+        const codePanel = document.getElementById('codePanel');
+        const codeContent = document.getElementById('codeContent');
+        const toggleCodeBtn = document.getElementById('toggleCode');
+        const recentPathsContainer = document.getElementById('recentPaths');
+        const recentList = document.getElementById('recentList');
+
+        // ── Recent Paths ─────────────────────────────────
+        function updateRecentPaths(newPath) {
+            if (!newPath) return;
+            recentPaths = [newPath, ...recentPaths.filter(p => p !== newPath)].slice(0, 5);
+            localStorage.setItem('asbestos_recent_paths', JSON.stringify(recentPaths));
+            renderRecentPaths();
+        }
+
+        function renderRecentPaths() {
+            if (recentPaths.length === 0) {
+                recentPathsContainer.classList.remove('visible');
+                return;
+            }
+            recentPathsContainer.classList.add('visible');
+            recentList.innerHTML = recentPaths.map(path => `
+                <div class="recent-item" title="${path}" onclick="autoScan('${path}')">
+                    ${path.split('/').pop() || path}
+                    <span style="opacity:0.4; font-size:9px; display:block;">${path}</span>
+                </div>
+            `).join('');
+        }
+
+        function autoScan(path) {
+            scanPathInput.value = path;
+            scanProject();
+        }
+
+        // Initialize recents
+        renderRecentPaths();
+
+        // ── Navigation Logic ─────────────────────────────
+        function toggleCodePanel() {
+            codePanel.classList.toggle('visible');
+            const isVisible = codePanel.classList.contains('visible');
+            toggleCodeBtn.style.background = isVisible ? 'var(--bg-action)' : 'none';
+            if (isVisible && currentFile && !codeCache[currentFile.path]) {
+                fetchRawCode(currentFile.path);
+            }
+        }
+
+        async function fetchRawCode(path) {
+            codeContent.textContent = 'Loading...';
+            try {
+                const resp = await fetch('/insight/raw', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ file_path: path })
+                });
+                const data = await resp.json();
+                if (data.error) throw new Error(data.error);
+                codeCache[path] = data.content;
+                if (currentFile && currentFile.path === path) {
+                    codeContent.textContent = data.content;
+                }
+            } catch (err) {
+                codeContent.textContent = 'Error loading source: ' + err.message;
+            }
+        }
+        async function scanProject() {
+            const dir = scanPathInput.value.trim();
+            if (!dir) return;
+
+            scanBtn.disabled = true;
+            scanBtn.textContent = '...';
+            sidebarStats.textContent = 'Scanning...';
+            fileTree.innerHTML = '';
+
+            try {
+                const resp = await fetch('/insight/scan', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ directory: dir }),
+                });
+                const data = await resp.json();
+
+                if (data.status === 'ok') {
+                    projectFiles = data.files || [];
+                    projectRoot = data.root || dir;
+                    sidebarStats.textContent = `${data.file_count} files · ${projectRoot.split('/').pop() || projectRoot}`;
+                    renderFileTree(projectFiles);
+                    updateRecentPaths(dir);
+                } else {
+                    sidebarStats.textContent = 'Error scanning directory';
+                }
+
+                insightCache = {};
+                quizCache = {};
+                summaryCache = {};
+                flowchartCache = {};
+            } catch (err) {
+                sidebarStats.textContent = `Error: ${err.message}`;
+            }
+
+            scanBtn.disabled = false;
+            scanBtn.textContent = 'Scan';
+        }
+
+        // ── Render File Tree ─────────────────────────────
+        function renderFileTree(files) {
+            fileTree.innerHTML = '';
+            const groups = {};
+            for (const f of files) {
+                const parts = f.relative_path.split('/');
+                const dir = parts.length > 1 ? parts.slice(0, -1).join('/') : '(root)';
+                if (!groups[dir]) groups[dir] = [];
+                groups[dir].push(f);
+            }
+
+            for (const [dir, dirFiles] of Object.entries(groups).sort()) {
+                const dirEl = document.createElement('div');
+                dirEl.className = 'tree-dir';
+                dirEl.textContent = dir;
+                fileTree.appendChild(dirEl);
+
+                for (const f of dirFiles) {
+                    const el = document.createElement('div');
+                    el.className = 'tree-item';
+                    el.dataset.path = f.path;
+                    el.innerHTML = `
+                        <span class="tree-icon">${getFileIcon(f.extension)}</span>
+                        <span class="tree-name">${f.name}</span>
+                        <span class="tree-size">${formatSize(f.size)}</span>
+                    `;
+                    el.onclick = () => selectFile(f);
+                    fileTree.appendChild(el);
+                }
+            }
+        }
+
+        function getFileIcon(ext) {
+            const icons = {
+                '.py': '🐍', '.js': '📜', '.ts': '💎', '.jsx': '⚛️', '.tsx': '⚛️',
+                '.swift': '🦅', '.kt': '🟣', '.java': '☕', '.go': '🐹', '.rs': '🦀',
+                '.c': '⚙️', '.cpp': '⚙️', '.h': '📎', '.hpp': '📎',
+                '.html': '🌐', '.css': '🎨', '.scss': '🎨',
+                '.json': '📦', '.yaml': '📋', '.yml': '📋', '.toml': '📋',
+                '.md': '📝', '.txt': '📄', '.sh': '🖥️', '.bash': '🖥️',
+                '.sql': '🗄️', '.dart': '🎯', '.rb': '💎',
+            };
+            return icons[ext] || '📄';
+        }
+
+        function formatSize(bytes) {
+            if (bytes < 1024) return `${bytes}B`;
+            if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)}K`;
+            return `${(bytes / (1024 * 1024)).toFixed(1)}M`;
+        }
+
+        // ── File Selection ───────────────────────────────
+        async function selectFile(file) {
+            document.querySelectorAll('.tree-item').forEach(el => el.classList.remove('active'));
+            const activeEl = document.querySelector(`.tree-item[data-path="${CSS.escape(file.path)}"]`);
+            if (activeEl) activeEl.classList.add('active');
+
+            currentFile = file;
+            toolbarFilename.textContent = file.relative_path || file.name;
+            toolbar.style.display = 'flex';
+            
+            // Check if code panel is open
+            if (codePanel.classList.contains('visible')) {
+                fetchRawCode(file.path);
+            }
+
+            setMode('insight');
+        }
+
+        // ── Mode Toggle ──────────────────────────────────
+        function setMode(mode) {
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('modeInsight').classList.toggle('active', mode === 'insight');
+
+            if (mode === 'insight' && currentFile) {
+                loadInsight(currentFile.path);
+            }
+        }
+
+        // ── Load Insight ─────────────────────────────────
+        async function loadInsight(filePath) {
+            if (insightCache[filePath]) {
+                renderInsight(insightCache[filePath]);
+                return;
+            }
+
+            showLoading('Analyzing...');
+
+            try {
+                const resp = await fetch('/insight/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ file_path: filePath, include_context: true }),
+                });
+                const data = await resp.json();
+
+                if (data.status === 'ok') {
+                    insightCache[filePath] = data.insight;
+                    renderInsight(data.insight);
+                } else {
+                    showError(data.error || 'Failed to analyze file');
+                }
+            } catch (err) {
+                showError(err.message);
+            }
+        }
+
+        // ── Load Quiz ────────────────────────────────────
+        async function loadQuiz() {
+            if (!currentFile) return;
+            const filePath = currentFile.path;
+
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('modeQuiz').classList.add('active');
+
+            if (quizCache[filePath]) {
+                const data = quizCache[filePath];
+                currentQuizData = data;
+                renderQuiz(data.quiz, data.answers);
+                return;
+            }
+
+            showLoading('Generating quiz...');
+
+            try {
+                const resp = await fetch('/insight/quiz', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ file_path: filePath }),
+                });
+                const data = await resp.json();
+
+                if (data.status === 'ok') {
+                    quizCache[filePath] = data;
+                    currentQuizData = data;
+                    renderQuiz(data.quiz, data.answers);
+                } else {
+                    showError(data.error || 'Failed to generate quiz');
+                }
+            } catch (err) {
+                showError(err.message);
+            }
+        }
+
+        // ── Load Summary ─────────────────────────────────
+        async function loadSummary() {
+            if (!currentFile) return;
+            const filePath = currentFile.path;
+
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('modeRecap').classList.add('active');
+
+            if (summaryCache[filePath]) {
+                renderInsight(summaryCache[filePath]);
+                return;
+            }
+
+            showLoading('Rebuilding context...');
+
+            try {
+                const resp = await fetch('/insight/summary', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ file_path: filePath }),
+                });
+                const data = await resp.json();
+
+                if (data.status === 'ok') {
+                    summaryCache[filePath] = data.summary;
+                    renderInsight(data.summary);
+                } else {
+                    showError(data.error || 'Failed to generate summary');
+                }
+            } catch (err) {
+                showError(err.message);
+            }
+        }
+
+        // ── Load Flowchart ────────────────────────────────
+        async function loadFlowchart() {
+            if (!currentFile) return;
+            const filePath = currentFile.path;
+
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('modeFlow').classList.add('active');
+
+            if (flowchartCache[filePath]) {
+                renderFlowchart(flowchartCache[filePath]);
+                return;
+            }
+
+            showLoading('Generating flowchart...');
+
+            try {
+                const resp = await fetch('/insight/flowchart', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ file_path: filePath }),
+                });
+                const data = await resp.json();
+
+                if (data.status === 'ok') {
+                    flowchartCache[filePath] = data.flowchart;
+                    renderFlowchart(data.flowchart);
+                } else {
+                    showError(data.error || 'Failed to generate flowchart');
+                }
+            } catch (err) {
+                showError(err.message);
+            }
+        }
+
+        // ── Renderers ────────────────────────────────────
+        function renderInsight(markdown) {
+            contentBody.innerHTML = `<div class="insight-content">${renderMarkdown(markdown)}</div>`;
+            contentBody.scrollTop = 0;
+        }
+
+        async function renderFlowchart(mermaidCode) {
+            const containerId = `mermaid-${Date.now()}`;
+            contentBody.innerHTML = `
+                <div class="flowchart-container">
+                    <div class="flowchart-label">
+                        Logic Flow · ${escapeHtml(currentFile?.name || 'file')}
+                        <span style="opacity:0.5; margin-left:12px; font-weight:normal;">(Scroll to zoom · Drag to pan)</span>
+                    </div>
+                    <div class="mermaid" id="${containerId}">${escapeHtml(mermaidCode)}</div>
+                </div>
+            `;
+            contentBody.scrollTop = 0;
+
+            // Render the mermaid diagram
+            try {
+                const element = document.getElementById(containerId);
+                
+                // Clear state manually to prevent mermaid caching issues
+                element.removeAttribute('data-processed');
+
+                await mermaid.run({ nodes: [element] });
+                
+                // Set up zoom/pan
+                const svg = element.querySelector('svg');
+                if (svg && svg.id !== containerId) { // mermaid.run moves content into a new SVG
+                    svg.style.maxWidth = 'none';
+                    svg.style.width = '100%';
+                    svg.style.height = '100%';
+                    
+                    // Small delay to ensure layout
+                    setTimeout(() => {
+                        try {
+                            svgPanZoom(svg, {
+                                zoomEnabled: true,
+                                controlIconsEnabled: true,
+                                fit: true,
+                                center: true,
+                                minZoom: 0.01,
+                                maxZoom: 20
+                            });
+                        } catch(e) { console.error("SVG Pan-Zoom failed:", e); }
+                    }, 50);
+                } else {
+                     // Check if Mermaid rendered an error message instead of an SVG
+                     const errorMsg = element.innerText;
+                     if (errorMsg.includes('Syntax error')) {
+                         throw new Error(errorMsg);
+                     }
+                }
+            } catch (err) {
+                console.error("Mermaid error:", err);
+                // Fallback: show the raw mermaid code and the error
+                contentBody.innerHTML = `
+                    <div class="insight-content">
+                        <h2>Flowchart Error</h2>
+                        <div class="error-msg" style="background:var(--bg-secondary); padding:16px; border-radius:8px; border:1px solid var(--border); color:#f87171; font-size:12px; margin-bottom:16px;">
+                            <strong>Parser Error:</strong> ${escapeHtml(err.message)}
+                        </div>
+                        <p>The model generated invalid Mermaid code. You can try to regenerate or check the raw output below:</p>
+                        <pre><div class="code-header"><span>mermaid</span></div><code>${escapeHtml(mermaidCode)}</code></pre>
+                    </div>
+                `;
+            }
+        }
+
+        function renderQuiz(questionsRaw, answers) {
+            // Parse questions (assuming 1., 2., 3. format)
+            const questions = questionsRaw.split(/\n\d\.\s/).filter(q => q.trim());
+            const firstQuestionPrefix = questionsRaw.match(/^\d\.\s/);
+            
+            let html = `
+                <div style="width:100%;">
+                    <div class="quiz-header">
+                        <span class="quiz-header-icon">🧠</span>
+                        <div class="quiz-header-text">
+                            <h2>Comprehension Check</h2>
+                            <p>Verify your mental model of ${escapeHtml(currentFile?.name || 'this file')}</p>
+                        </div>
+                    </div>
+                <div style="max-width:700px; margin:0 auto; padding: 0 40px 40px;">
+            `;
+
+            questions.forEach((q, i) => {
+                const questionText = (i === 0 && !firstQuestionPrefix) ? q : q;
+                html += `
+                    <div class="quiz-question-container">
+                        <div class="insight-content" style="margin:0; padding:0 0 16px 0; font-size:14px;">
+                            <strong>Question ${i+1}</strong>
+                            <p>${renderMarkdown(questionText.trim())}</p>
+                        </div>
+                        <textarea class="quiz-input" placeholder="Type your answer here to solidify your understanding..." id="quiz-ans-${i}"></textarea>
+                    </div>
+                `;
+            });
+
+            html += `
+                <div style="display:flex; justify-content:center; margin-top:32px;">
+                    <button class="submit-btn" id="submitQuizBtn" onclick="submitQuiz()">
+                        Submit Answers
+                    </button>
+                </div>
+                <div id="quizFeedbackArea"></div>
+            `;
+
+            if (answers.trim()) {
+                html += `
+                    <div class="quiz-answers-toggle" style="margin-top:40px; opacity:0.6;">
+                        <button class="quiz-answers-btn" onclick="toggleAnswers(this)">
+                            <span>💡</span> Just reveal all answers
+                        </button>
+                        <div class="quiz-answers-content">
+                            <div class="insight-content">${renderMarkdown(answers)}</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+            contentBody.innerHTML = html;
+            contentBody.scrollTop = 0;
+        }
+
+        async function submitQuiz() {
+            if (!currentQuizData || !currentFile) return;
+            const btn = document.getElementById('submitQuizBtn');
+            const feedbackArea = document.getElementById('quizFeedbackArea');
+            
+            const textareas = document.querySelectorAll('.quiz-input');
+            const userAnswers = Array.from(textareas).map(ta => ta.value.trim());
+            
+            if (userAnswers.every(a => !a)) {
+                alert("Please try to answer at least one question!");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '⌛ Grading...';
+            feedbackArea.innerHTML = '<div class="loading-state" style="height:auto; min-height:100px; padding:20px;"><div class="typing-indicator"><span></span><span></span><span></span></div></div>';
+
+            try {
+                const resp = await fetch('/insight/grade', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        file_path: currentFile.path,
+                        user_answers: userAnswers,
+                        ground_truth: currentQuizData.answers || currentQuizData.quiz
+                    }),
+                });
+                const data = await resp.json();
+
+                if (data.status === 'ok') {
+                    feedbackArea.innerHTML = `
+                        <div class="feedback-card">
+                            <div class="insight-content" style="margin:0; padding:0;">
+                                ${renderMarkdown(data.feedback)}
+                            </div>
+                        </div>
+                    `;
+                    feedbackArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    feedbackArea.innerHTML = `<p style="color:#f87171; text-align:center; padding:20px;">Error: ${data.error}</p>`;
+                }
+            } catch (err) {
+                feedbackArea.innerHTML = `<p style="color:#f87171; text-align:center; padding:20px;">Error: ${err.message}</p>`;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '🚀 Resubmit';
+            }
+        }
+
+        function toggleAnswers(btn) {
+            const content = btn.nextElementSibling;
+            const isVisible = content.classList.toggle('visible');
+            btn.innerHTML = isVisible
+                ? '<span>🙈</span> Hide Answers'
+                : '<span>💡</span> Reveal Answers';
+        }
+
+        function showLoading(text) {
+            contentBody.innerHTML = `
+                <div class="loading-state">
+                    <div class="typing-indicator"><span></span><span></span><span></span></div>
+                    <div class="loading-text">${text}</div>
+                </div>
+            `;
+        }
+
+        function showError(msg) {
+            contentBody.innerHTML = `
+                <div class="welcome-state">
+                    <h1>OOPS</h1>
+                    <span class="welcome-subtitle">${escapeHtml(msg)}</span>
+                </div>
+            `;
+        }
+
+        // ── Markdown Renderer (same as chat.html) ────────
+        function renderMarkdown(text) {
+            if (!text) return '';
+            let html = escapeHtml(text);
+
+            // Code blocks with language labels
+            let codeId = 0;
+            html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (match, lang, code) => {
+                const id = `code-${Date.now()}-${codeId++}`;
+                const label = lang || 'text';
+                return `<pre><div class="code-header"><span>${label}</span></div><code id="${id}">${code.trim()}</code></pre>`;
+            });
+
+            html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+            // Tables
+            html = html.replace(
+                /^\|(.+)\|\s*\n\|[\s:|-]+\|\s*\n((?:\|.+\|\s*\n?)*)/gm,
+                (match, headerRow, bodyRows) => {
+                    const headers = headerRow.split('|').map(h => h.trim()).filter(Boolean);
+                    let table = '<table><thead><tr>';
+                    headers.forEach(h => { table += `<th>${h}</th>`; });
+                    table += '</tr></thead><tbody>';
+                    bodyRows.trim().split('\n').forEach(row => {
+                        const cells = row.split('|').map(c => c.trim()).filter(Boolean);
+                        if (cells.length) {
+                            table += '<tr>';
+                            cells.forEach(c => { table += `<td>${c}</td>`; });
+                            table += '</tr>';
+                        }
+                    });
+                    table += '</tbody></table>';
+                    return table;
+                }
+            );
+
+            html = html.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>');
+            html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+            html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+            html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+            html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+            html = html.replace(/^---$/gm, '<hr>');
+
+            html = html.replace(/^\d+\. (.+)$/gm, '<li class="ol-item">$1</li>');
+            html = html.replace(/((?:<li class="ol-item">.*<\/li>\n?)+)/gs, '<ol>$1</ol>');
+            html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+            html = html.replace(/((?:<li>(?!class).*<\/li>\n?)+)/gs, '<ul>$1</ul>');
+
+            html = html.replace(/\n/g, '<br>');
+            html = html.replace(/(<\/pre>)<br>/g, '$1');
+            html = html.replace(/(<\/table>)<br>/g, '$1');
+            html = html.replace(/(<\/h[123]>)<br>/g, '$1');
+            html = html.replace(/(<\/ul>)<br>/g, '$1');
+            html = html.replace(/(<\/ol>)<br>/g, '$1');
+            html = html.replace(/(<\/blockquote>)<br>/g, '$1');
+            html = html.replace(/<br>(<pre>)/g, '$1');
+            html = html.replace(/<br>(<table>)/g, '$1');
+            html = html.replace(/<br>(<h[123]>)/g, '$1');
+            html = html.replace(/<br>(<ul>)/g, '$1');
+            html = html.replace(/<br>(<ol>)/g, '$1');
+            html = html.replace(/<br>(<hr>)/g, '$1');
+
+            return html;
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // ── Keyboard ─────────────────────────────────────
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.target === scanPathInput) {
+                e.preventDefault();
+                scanProject();
+            }
+        });
+    </script>
+</body>
+</html>
